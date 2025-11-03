@@ -18,6 +18,12 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        if (!User.Identity?.IsAuthenticated ?? true)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        // Je?li zalogowany, poka? stron? g?ówn?
         return View();
     }
 

@@ -1,0 +1,19 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MyMvcPostgresApp.ViewModels
+{
+    public class LoginViewModel
+    {
+        [Required(ErrorMessage = "Login jest wymagany")]
+        [Display(Name = "Login")]
+        public string Login { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Hasło jest wymagane")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Hasło")]
+        public string Password { get; set; } = string.Empty;
+
+        [Display(Name = "Zapamiętaj mnie")]
+        public bool RememberMe { get; set; }
+    }
+}

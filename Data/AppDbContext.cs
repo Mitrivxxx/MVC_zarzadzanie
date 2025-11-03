@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MyMvcPostgresApp.Controllers;
+using MyMvcPostgresApp.Models;
 
 namespace MyMvcPostgresApp.Data
 {
@@ -6,5 +8,15 @@ namespace MyMvcPostgresApp.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        public DbSet<User> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Login)
+                .IsUnique();
+        }
     }
 }
