@@ -1,0 +1,108 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Visual Studio cache/options
+.vs/
+.vscode/
+.idea/
+*.sln.iml
+
+# Rider / JetBrains
+.idea/
+*.DotSettings.user
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+!packages/build/
+.nuget/
+
+# Tye
+.tye/
+
+# Azure build
+.csproj.user
+*.publishsettings
+
+# Publish outputs
+publish/
+wwwroot/lib/
+node_modules/
+bower_components/
+
+# Configuration
+appsettings.*.json
+!appsettings.json
+secrets.json
+
+# Logs
+*.log
+*.tlog
+
+# Coverage and test results
+*.coverage
+*.coveragexml
+TestResults/
+*.trx
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# macOS
+.DS_Store
+
+# Other
+*.swp
+*.bak
+*.tmp
+*.pid
+*.seed
+*.scc
+
+# Local environment files
+.env
+.env.*
+
+# Docker
+*.pid
+docker-compose.override.yml
+docker-compose.*.yml
+
+# Local databases
+*.mdf
+*.ldf
+
+# Rider, VS Cache
+.idea/
+.vs/
+
+# Backup files
+*.bak
+*.old
+*.orig
