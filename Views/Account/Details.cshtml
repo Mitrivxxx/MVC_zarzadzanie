@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Moje konto";
+}
+
+<h2>Moje konto</h2>
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <div class="card mt-3 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">@User.Identity.Name</h5>
+            <p><strong>Rola:</strong> @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</p>
+            <hr />
+            <a asp-action="ChangePassword" asp-controller="Account" class="btn btn-warning">Zmień hasło</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning mt-3">Nie jesteś zalogowany.</div>
+}

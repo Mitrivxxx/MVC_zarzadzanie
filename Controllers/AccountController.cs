@@ -119,5 +119,53 @@ namespace MyMvcPostgresApp.Controllers
                 return Convert.ToBase64String(hash);
             }
         }
+
+        [HttpGet]
+        public IActionResult Details()
+        {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Login");
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            if (!User.Identity!.IsAuthenticated)
+                return RedirectToAction("Login");
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var login = User.Identity!.Name;
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Login == login);
+
+            if (user == null)
+            {
+                TempData["Error"] = "Nie znaleziono użytkownika.";
+                return View(model);
+            }
+
+            var currentHashed = HashPassword(model.CurrentPassword);
+            if (user.Password != currentHashed)
+            {
+                TempData["Error"] = "Aktualne hasło jest nieprawidłowe.";
+                return View(model);
+            }
+
+            user.Password = HashPassword(model.NewPassword);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Hasło zostało zmienione pomyślnie.";
+            return RedirectToAction("Details");
+        }
     }
 }
