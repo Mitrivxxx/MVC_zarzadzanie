@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Lista użytkowników";
+    var users = ViewBag.Users as IEnumerable<dynamic>;
+}
+
+<h2>Lista użytkowników</h2>
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Login</th>
+            <th>Rola</th>
+            <th>Data utworzenia</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (users != null && users.Any())
+        {
+            foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Login</td>
+                    <td>@user.Role</td>
+                    <td>@user.CreatedAt</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="3" class="text-center">Brak użytkowników</td></tr>
+        }
+    </tbody>
+</table>
