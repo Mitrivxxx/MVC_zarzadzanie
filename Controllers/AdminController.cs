@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyMvcPostgresApp.Data;
+using MyMvcPostgresApp.Models;
 
 namespace MyMvcPostgresApp.Controllers
 {
@@ -15,20 +16,40 @@ namespace MyMvcPostgresApp.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> UsersList()
+        public async Task<IActionResult> Users()
         {
             var users = await _context.Users
-                .Select(u => new
-                {
-                    u.Login,
-                    u.Role,
-                    CreatedAt = u.CreatedAt.ToString("dd.MM.yyyy")
-                })
+                .OrderBy(u => u.Login)
                 .ToListAsync();
 
-            ViewBag.Users = users;
-            return View();
+            return View("UsersList", users);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(User model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _context.Users.FindAsync(model.Id);
+            if (user == null) return NotFound();
+
+            user.Login = model.Login;
+            user.Role = model.Role;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Dane użytkownika zostały zaktualizowane.";
+            return RedirectToAction("Users", "Admin");
         }
     }
 }

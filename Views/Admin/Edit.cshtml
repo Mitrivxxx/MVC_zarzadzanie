@@ -1,0 +1,28 @@
+﻿@model MyMvcPostgresApp.Models.User
+
+<h2>Edytuj użytkownika</h2>
+
+<form asp-action="Edit" asp-controller="Admin" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Login"></label>
+        <input asp-for="Login" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Rola</label><br />
+        <div>
+            <input type="radio" asp-for="Role" value="Pracownik" /> Pracownik<br />
+            <input type="radio" asp-for="Role" value="Kierownik" /> Kierownik<br />
+            <input type="radio" asp-for="Role" value="HR" /> HR<br />
+            <input type="radio" asp-for="Role" value="Stażysta" /> Stażysta<br />
+            <input type="radio" asp-for="Role" value="Admin" /> Admin
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Zapisz</button>
+    <a asp-action="Users" asp-controller="Admin" class="btn btn-secondary">Anuluj</a>
+</form>
+

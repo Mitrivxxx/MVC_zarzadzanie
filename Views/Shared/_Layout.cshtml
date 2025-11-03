@@ -10,7 +10,6 @@
 
 </head>
 <body>
-
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -23,40 +22,38 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-
-                        @* 🔹 Zakładka ADMIN tylko dla użytkowników z rolą Admin *@
-                        @if (User.Identity != null && User.Identity.IsAuthenticated &&
-                                                User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value == "Admin")
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Zarządzaj
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Admin" asp-action="UsersList">Zobacz wszystkich użytkowników</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        }
                     </ul>
 
                     <ul class="navbar-nav">
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        @if (User.Identity?.IsAuthenticated == true)
                         {
+                            var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
+                            if (role == "Admin")
+                            {
+                                <li class="nav-item dropdown me-3">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-shield-lock"></i> Zarzadzaj
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Admin" asp-action="Users">Zobacz wszystkich użytkowników</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-person-circle"></i> @User.Identity.Name
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Account" asp-action="Details">Konto</a>
-                                    </li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Details">Konto</a></li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li>
                                         <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
@@ -69,18 +66,22 @@
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Zaloguj</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Zarejestruj</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Zaloguj</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Zarejestruj</a></li>
                         }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+
 
     <div class="container">
         <main role="main" class="pb-3">
