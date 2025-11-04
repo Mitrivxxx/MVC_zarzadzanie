@@ -7,6 +7,29 @@
     <div class="alert alert-success">@TempData["Success"]</div>
 }
 
+<form method="get" asp-controller="Admin" asp-action="Users" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input type="text"
+               name="login"
+               value="@(ViewData["LoginFilter"] as string)"
+               class="form-control"
+               placeholder="Login zawiera..." />
+    </div>
+    <div class="col-md-3">
+        <select name="role" class="form-select">
+            <option value="">Wszystkie role</option>
+            @foreach (var r in (IEnumerable<string>)(ViewBag.Roles ?? new List<string>()))
+            {
+                var selected = string.Equals((string?)ViewData["RoleFilter"], r, StringComparison.Ordinal) ? "selected" : "";
+                <option value="@r" selected="@selected">@r</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-5">
+        <button type="submit" class="btn btn-primary me-2">Filtruj</button>
+        <a class="btn btn-outline-secondary" asp-controller="Admin" asp-action="Users">Wyczyść</a>
+    </div>
+</form>
 
 <table class="table table-striped">
     <thead>

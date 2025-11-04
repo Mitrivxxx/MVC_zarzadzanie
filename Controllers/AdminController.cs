@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyMvcPostgresApp.Data;
 using MyMvcPostgresApp.Models;
-using MyMvcPostgresApp.ViewModels; // ← DODAJ TO
+using MyMvcPostgresApp.ViewModels;
 
 namespace MyMvcPostgresApp.Controllers
 {
@@ -17,9 +17,34 @@ namespace MyMvcPostgresApp.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Users()
+        // GET: /Admin/Users?login=...&role=...
+        public async Task<IActionResult> Users(string? login, string? role)
         {
-            var users = await _context.Users
+            // Lista dostępnych ról do selecta
+            var roles = await _context.Users
+                .Select(u => u.Role)
+                .Distinct()
+                .OrderBy(r => r)
+                .ToListAsync();
+
+            ViewBag.Roles = roles;
+            ViewData["LoginFilter"] = login;
+            ViewData["RoleFilter"] = role;
+
+            var query = _context.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(login))
+            {
+                // Postgres ILIKE dla case-insensitive contains
+                query = query.Where(u => EF.Functions.ILike(u.Login, $"%{login}%"));
+            }
+
+            if (!string.IsNullOrWhiteSpace(role))
+            {
+                query = query.Where(u => u.Role == role);
+            }
+
+            var users = await query
                 .OrderBy(u => u.Login)
                 .ToListAsync();
 
@@ -32,7 +57,6 @@ namespace MyMvcPostgresApp.Controllers
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 
-            // Konwertuj na ViewModel (bez hasła)
             var viewModel = new EditUserViewModel
             {
                 Id = user.Id,
@@ -53,7 +77,6 @@ namespace MyMvcPostgresApp.Controllers
             var user = await _context.Users.FindAsync(model.Id);
             if (user == null) return NotFound();
 
-            // Sprawdź czy login nie jest już zajęty przez innego użytkownika
             var existingUser = await _context.Users
                 .FirstOrDefaultAsync(u => u.Login == model.Login && u.Id != model.Id);
 
@@ -63,7 +86,6 @@ namespace MyMvcPostgresApp.Controllers
                 return View(model);
             }
 
-            // Aktualizuj tylko login i rolę (NIE hasło!)
             user.Login = model.Login;
             user.Role = model.Role;
 
