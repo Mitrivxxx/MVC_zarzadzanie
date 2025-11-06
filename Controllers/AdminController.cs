@@ -94,5 +94,23 @@ namespace MyMvcPostgresApp.Controllers
             TempData["Success"] = "Dane użytkownika zostały zaktualizowane.";
             return RedirectToAction("Users");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                TempData["Success"] = "Użytkownik nie został znaleziony.";
+                return RedirectToAction("Users");
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Użytkownik został usunięty.";
+            return RedirectToAction("Users");
+        }
     }
 }
