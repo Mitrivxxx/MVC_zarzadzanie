@@ -1,66 +1,263 @@
 ﻿@model IEnumerable<MyMvcPostgresApp.Models.User>
 
-<h2>Lista użytkowników</h2>
+@{
+    ViewData["Title"] = "Zarządzanie użytkownikami";
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+    var pageSize = ViewBag.PageSize ?? 10;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0"><i class="bi bi-people-fill me-2"></i>Zarządzanie użytkownikami</h2>
+        <p class="text-muted mb-0">Łącznie użytkowników: <strong>@ViewBag.TotalUsers</strong></p>
+    </div>
+    <a asp-controller="Admin" asp-action="CreateUser" class="btn btn-primary">
+        <i class="bi bi-person-plus-fill me-2"></i>Dodaj użytkownika
+    </a>
+</div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success">@TempData["Success"]</div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 }
 
-<form method="get" asp-controller="Admin" asp-action="Users" class="row g-2 mb-3">
-    <div class="col-md-4">
-        <input type="text"
-               name="login"
-               value="@(ViewData["LoginFilter"] as string)"
-               class="form-control"
-               placeholder="Login zawiera..." />
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
-    <div class="col-md-3">
-        <select name="role" class="form-select">
-            <option value="">Wszystkie role</option>
-            @foreach (var r in (IEnumerable<string>)(ViewBag.Roles ?? new List<string>()))
-            {
-                var selected = string.Equals((string?)ViewData["RoleFilter"], r, StringComparison.Ordinal) ? "selected" : "";
-                <option value="@r" selected="@selected">@r</option>
-            }
-        </select>
-    </div>
-    <div class="col-md-5">
-        <button type="submit" class="btn btn-primary me-2">Filtruj</button>
-        <a class="btn btn-outline-secondary" asp-controller="Admin" asp-action="Users">Wyczyść</a>
-    </div>
-</form>
+}
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Login</th>
-            <th>Rola</th>
-            <th>Data utworzenia</th>
-            <th>Akcje</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model)
-        {
-            <tr>
-                <td>@user.Login</td>
-                <td>@user.Role</td>
-                <td>@user.CreatedAt.ToString("dd.MM.yyyy")</td>
-                <td>
-                    <a class="btn btn-sm btn-outline-primary" asp-controller="Admin" asp-action="Edit" asp-route-id="@user.Id">Edytuj</a>
+<!-- Filtry -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h6 class="card-title mb-3"><i class="bi bi-funnel me-2"></i>Filtruj użytkowników</h6>
+        <form method="get" asp-controller="Admin" asp-action="Users" class="row g-3">
+            <div class="col-md-5">
+                <label class="form-label">Login</label>
+                <input type="text"
+                       name="login"
+                       value="@(ViewData["LoginFilter"] as string)"
+                       class="form-control"
+                       placeholder="Wpisz login..." />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Rola</label>
+                <select name="role" class="form-select">
+                    <option value="">Wszystkie role</option>
+                    @foreach (var r in (IEnumerable<string>)(ViewBag.Roles ?? new List<string>()))
+                    {
+                        var selected = string.Equals((string?)ViewData["RoleFilter"], r, StringComparison.Ordinal) ? "selected" : "";
+                        <option value="@r" selected="@selected">@r</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">
+                    <i class="bi bi-search me-1"></i>Szukaj
+                </button>
+                <a class="btn btn-outline-secondary" asp-controller="Admin" asp-action="Users" title="Wyczyść filtry">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
 
-                    <form asp-controller="Admin"
-                          asp-action="Delete"
-                          asp-route-id="@user.Id"
-                          method="post"
-                          class="d-inline"
-                          onsubmit="return confirm('Na pewno usunąć tego użytkownika?');">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- Tabela użytkowników -->
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Login</th>
+                        <th>Rola</th>
+                        <th>Data utworzenia</th>
+                        <th class="text-end pe-4">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div>
+                                        <div class="fw-semibold">@user.Login</div>
+                                        <small class="text-muted">ID: @user.Id</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    @{
+                                        var badgeClass = user.Role switch
+                                        {
+                                            "Admin" => "bg-danger",
+                                            "Kierownik" => "bg-warning text-dark",
+                                            "HR" => "bg-info",
+                                            "Pracownik" => "bg-success",
+                                            "Stażysta" => "bg-secondary",
+                                            _ => "bg-primary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@user.Role</span>
+                                </td>
+                                <td>
+                                    <div>@user.CreatedAt.ToString("dd.MM.yyyy")</div>
+                                    <small class="text-muted">@user.CreatedAt.ToString("HH:mm")</small>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       asp-controller="Admin"
+                                       asp-action="Edit"
+                                       asp-route-id="@user.Id">
+                                        Edytuj
+                                    </a>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal@(user.Id)">
+                                        Usuń
+                                    </button>
+
+                                    <!-- Modal potwierdzenia usunięcia -->
+                                    <div class="modal fade" id="deleteModal@(user.Id)" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Potwierdź usunięcie</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Czy na pewno chcesz usunąć użytkownika <strong>@user.Login</strong>?</p>
+                                                    <p class="text-muted mb-0"><small>Tej operacji nie można cofnąć.</small></p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                                                    <form asp-controller="Admin"
+                                                          asp-action="Delete"
+                                                          asp-route-id="@user.Id"
+                                                          method="post"
+                                                          class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-danger">
+                                                            Usuń
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                <p class="mb-0">Nie znaleziono użytkowników</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginacja -->
+    @if (totalPages > 1)
+    {
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                    Strona @currentPage z @totalPages
+                </div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        <!-- Przycisk Poprzednia -->
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-controller="Admin"
+                               asp-action="Users"
+                               asp-route-page="@(currentPage - 1)"
+                               asp-route-login="@(ViewData["LoginFilter"])"
+                               asp-route-role="@(ViewData["RoleFilter"])">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        @{
+                            var startPage = Math.Max(1, currentPage - 2);
+                            var endPage = Math.Min(totalPages, currentPage + 2);
+                        }
+
+                        @if (startPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link"
+                                   asp-controller="Admin"
+                                   asp-action="Users"
+                                   asp-route-page="1"
+                                   asp-route-login="@(ViewData["LoginFilter"])"
+                                   asp-route-role="@(ViewData["RoleFilter"])">1</a>
+                            </li>
+                            @if (startPage > 2)
+                            {
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            }
+                        }
+
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link"
+                                   asp-controller="Admin"
+                                   asp-action="Users"
+                                   asp-route-page="@i"
+                                   asp-route-login="@(ViewData["LoginFilter"])"
+                                   asp-route-role="@(ViewData["RoleFilter"])">@i</a>
+                            </li>
+                        }
+
+                        @if (endPage < totalPages)
+                        {
+                            @if (endPage < totalPages - 1)
+                            {
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            }
+                            <li class="page-item">
+                                <a class="page-link"
+                                   asp-controller="Admin"
+                                   asp-action="Users"
+                                   asp-route-page="@totalPages"
+                                   asp-route-login="@(ViewData["LoginFilter"])"
+                                   asp-route-role="@(ViewData["RoleFilter"])">@totalPages</a>
+                            </li>
+                        }
+
+                        <!-- Przycisk Następna -->
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-controller="Admin"
+                               asp-action="Users"
+                               asp-route-page="@(currentPage + 1)"
+                               asp-route-login="@(ViewData["LoginFilter"])"
+                               asp-route-role="@(ViewData["RoleFilter"])">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
+</div>

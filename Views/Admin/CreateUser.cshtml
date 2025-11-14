@@ -1,0 +1,130 @@
+﻿@model MyMvcPostgresApp.ViewModels.CreateUserViewModel
+
+@{
+    ViewData["Title"] = "Dodaj użytkownika";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-controller="Admin" asp-action="Users" class="btn btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h2 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Dodaj nowego użytkownika</h2>
+                <p class="text-muted mb-0">Wypełnij formularz, aby utworzyć nowe konto</p>
+            </div>
+        </div>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form asp-action="CreateUser" asp-controller="Admin" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-4">
+                        <label asp-for="Login" class="form-label fw-semibold">
+                            <i class="bi bi-person me-1"></i>Login
+                        </label>
+                        <input asp-for="Login" class="form-control form-control-lg" placeholder="np. jan.kowalski" />
+                        <span asp-validation-for="Login" class="text-danger small"></span>
+                        <div class="form-text">Login musi zawierać od 3 do 50 znaków</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Password" class="form-label fw-semibold">
+                            <i class="bi bi-lock me-1"></i>Hasło
+                        </label>
+                        <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="Wpisz hasło" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                        <div class="form-text">Hasło musi zawierać minimum 6 znaków</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ConfirmPassword" class="form-label fw-semibold">
+                            <i class="bi bi-lock-fill me-1"></i>Potwierdź hasło
+                        </label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control form-control-lg" placeholder="Powtórz hasło" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-shield-check me-1"></i>Rola
+                        </label>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="form-check form-check-inline p-3 border rounded w-100">
+                                    <input class="form-check-input" type="radio" asp-for="Role" value="Pracownik" id="rolePracownik" checked />
+                                    <label class="form-check-label w-100 ms-2" for="rolePracownik">
+                                        <div class="fw-semibold">Pracownik</div>
+                                        <small class="text-muted">Podstawowy dostęp</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-check-inline p-3 border rounded w-100">
+                                    <input class="form-check-input" type="radio" asp-for="Role" value="Kierownik" id="roleKierownik" />
+                                    <label class="form-check-label w-100 ms-2" for="roleKierownik">
+                                        <div class="fw-semibold">Kierownik</div>
+                                        <small class="text-muted">Zarządzanie zespołem</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-check-inline p-3 border rounded w-100">
+                                    <input class="form-check-input" type="radio" asp-for="Role" value="HR" id="roleHR" />
+                                    <label class="form-check-label w-100 ms-2" for="roleHR">
+                                        <div class="fw-semibold">HR</div>
+                                        <small class="text-muted">Zasoby ludzkie</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-check-inline p-3 border rounded w-100">
+                                    <input class="form-check-input" type="radio" asp-for="Role" value="Stażysta" id="roleStrazysta" />
+                                    <label class="form-check-label w-100 ms-2" for="roleStrazysta">
+                                        <div class="fw-semibold">Stażysta</div>
+                                        <small class="text-muted">Ograniczony dostęp</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-check form-check-inline p-3 border border-danger rounded w-100">
+                                    <input class="form-check-input" type="radio" asp-for="Role" value="Admin" id="roleAdmin" />
+                                    <label class="form-check-label w-100 ms-2" for="roleAdmin">
+                                        <div class="fw-semibold text-danger">Admin</div>
+                                        <small class="text-muted">Pełny dostęp do systemu</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Role" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                            <i class="bi bi-check-lg me-2"></i>Utwórz użytkownika
+                        </button>
+                        <a asp-action="Users" asp-controller="Admin" class="btn btn-outline-secondary btn-lg">
+                            Anuluj
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
