@@ -1,0 +1,153 @@
+﻿@model MyMvcPostgresApp.Models.Project
+
+@{
+    ViewData["Title"] = "Szczegóły projektu";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-controller="Projects" asp-action="Index" class="btn btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h2 class="mb-0"><i class="bi bi-info-circle-fill me-2"></i>Szczegóły projektu</h2>
+                <p class="text-muted mb-0">Pełne informacje o projekcie</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-3">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h3 class="mb-2">@Model.Name</h3>
+                        @{
+                            var badgeClass = Model.Status switch
+                            {
+                                "Active" => "bg-success",
+                                "Completed" => "bg-primary",
+                                "OnHold" => "bg-warning text-dark",
+                                "Cancelled" => "bg-danger",
+                                _ => "bg-secondary"
+                            };
+                        }
+                        <span class="badge @badgeClass fs-6">@Model.Status</span>
+                    </div>
+                    <div>
+                        <a asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="bi bi-pencil me-1"></i>Edytuj
+                        </a>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row g-4">
+                    <div class="col-md-12">
+                        <h6 class="text-muted mb-2"><i class="bi bi-file-text me-2"></i>Opis</h6>
+                        <p class="mb-0">
+                            @if (!string.IsNullOrWhiteSpace(Model.Description))
+                            {
+                                @Model.Description
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">Brak opisu</span>
+                            }
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2"><i class="bi bi-calendar-check me-2"></i>Data rozpoczęcia</h6>
+                        <p class="mb-0 fw-semibold">
+                            @if (Model.StartDate.HasValue)
+                            {
+                                @Model.StartDate.Value.ToString("dd MMMM yyyy")
+                            }
+                            else
+                            {
+                                <span class="text-muted">Nie określono</span>
+                            }
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2"><i class="bi bi-calendar-x me-2"></i>Data zakończenia</h6>
+                        <p class="mb-0 fw-semibold">
+                            @if (Model.EndDate.HasValue)
+                            {
+                                @Model.EndDate.Value.ToString("dd MMMM yyyy")
+                            }
+                            else
+                            {
+                                <span class="text-muted">Nie określono</span>
+                            }
+                        </p>
+                    </div>
+
+                    @if (Model.StartDate.HasValue && Model.EndDate.HasValue)
+                    {
+                        var duration = (Model.EndDate.Value - Model.StartDate.Value).Days;
+                        <div class="col-md-12">
+                            <h6 class="text-muted mb-2"><i class="bi bi-clock-history me-2"></i>Czas trwania</h6>
+                            <p class="mb-0 fw-semibold">@duration dni</p>
+                        </div>
+                    }
+
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2"><i class="bi bi-calendar-plus me-2"></i>Data utworzenia</h6>
+                        <p class="mb-0">
+                            @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2"><i class="bi bi-pencil-square me-2"></i>Ostatnia aktualizacja</h6>
+                        <p class="mb-0">
+                            @Model.UpdatedAt.ToString("dd MMMM yyyy, HH:mm")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a asp-controller="Projects" asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-list-ul me-2"></i>Powrót do listy
+            </a>
+            <button type="button"
+                    class="btn btn-outline-danger ms-auto"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteModal">
+                <i class="bi bi-trash me-2"></i>Usuń projekt
+            </button>
+        </div>
+
+        <!-- Modal potwierdzenia usunięcia -->
+        <div class="modal fade" id="deleteModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Potwierdź usunięcie</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Czy na pewno chcesz usunąć projekt <strong>@Model.Name</strong>?</p>
+                        <p class="text-muted mb-0"><small>Tej operacji nie można cofnąć.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        <form asp-controller="Projects"
+                              asp-action="Delete"
+                              asp-route-id="@Model.Id"
+                              method="post"
+                              class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger">Usuń</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

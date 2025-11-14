@@ -1,0 +1,279 @@
+﻿@model IEnumerable<MyMvcPostgresApp.Models.Project>
+
+@{
+    ViewData["Title"] = "Zarządzanie projektami";
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0"><i class="bi bi-kanban-fill me-2"></i>Zarządzanie projektami</h2>
+        <p class="text-muted mb-0">Łącznie projektów: <strong>@ViewBag.TotalProjects</strong></p>
+    </div>
+    <a asp-controller="Projects" asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle-fill me-2"></i>Dodaj projekt
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Filtry -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h6 class="card-title mb-3"><i class="bi bi-funnel me-2"></i>Filtruj projekty</h6>
+        <form method="get" asp-controller="Projects" asp-action="Index" class="row g-3">
+            <div class="col-md-5">
+                <label class="form-label">Nazwa projektu</label>
+                <input type="text"
+                       name="name"
+                       value="@(ViewData["NameFilter"] as string)"
+                       class="form-control"
+                       placeholder="Wpisz nazwę..." />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">Wszystkie statusy</option>
+                    @foreach (var s in (IEnumerable<string>)(ViewBag.Statuses ?? new List<string>()))
+                    {
+                        var selected = string.Equals((string?)ViewData["StatusFilter"], s, StringComparison.Ordinal) ? "selected" : "";
+                        <option value="@s" selected="@selected">@s</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">
+                    <i class="bi bi-search me-1"></i>Szukaj
+                </button>
+                <a class="btn btn-outline-secondary" asp-controller="Projects" asp-action="Index" title="Wyczyść filtry">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tabela projektów -->
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Nazwa projektu</th>
+                        <th>Status</th>
+                        <th>Data rozpoczęcia</th>
+                        <th>Data zakończenia</th>
+                        <th class="text-end pe-4">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var project in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div>
+                                        <div class="fw-semibold">@project.Name</div>
+                                        <small class="text-muted">@(project.Description?.Length > 50 ? project.Description.Substring(0, 50) + "..." : project.Description)</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    @{
+                                        var badgeClass = project.Status switch
+                                        {
+                                            "Active" => "bg-success",
+                                            "Completed" => "bg-primary",
+                                            "OnHold" => "bg-warning text-dark",
+                                            "Cancelled" => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@project.Status</span>
+                                </td>
+                                <td>
+                                    @if (project.StartDate.HasValue)
+                                    {
+                                        @project.StartDate.Value.ToString("dd.MM.yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (project.EndDate.HasValue)
+                                    {
+                                        @project.EndDate.Value.ToString("dd.MM.yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a class="btn btn-sm btn-outline-info"
+                                       asp-controller="Projects"
+                                       asp-action="Details"
+                                       asp-route-id="@project.Id">
+                                        Szczegóły
+                                    </a>
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       asp-controller="Projects"
+                                       asp-action="Edit"
+                                       asp-route-id="@project.Id">
+                                        Edytuj
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal@(project.Id)">
+                                        Usuń
+                                    </button>
+
+                                    <!-- Modal potwierdzenia usunięcia -->
+                                    <div class="modal fade" id="deleteModal@(project.Id)" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Potwierdź usunięcie</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Czy na pewno chcesz usunąć projekt <strong>@project.Name</strong>?</p>
+                                                    <p class="text-muted mb-0"><small>Tej operacji nie można cofnąć.</small></p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                                                    <form asp-controller="Projects"
+                                                          asp-action="Delete"
+                                                          asp-route-id="@project.Id"
+                                                          method="post"
+                                                          class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-danger">Usuń</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                <p class="mb-0">Nie znaleziono projektów</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginacja -->
+    @if (totalPages > 1)
+    {
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                    Strona @currentPage z @totalPages
+                </div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-controller="Projects"
+                               asp-action="Index"
+                               asp-route-page="@(currentPage - 1)"
+                               asp-route-name="@(ViewData["NameFilter"])"
+                               asp-route-status="@(ViewData["StatusFilter"])">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        @{
+                            var startPage = Math.Max(1, currentPage - 2);
+                            var endPage = Math.Min(totalPages, currentPage + 2);
+                        }
+
+                        @if (startPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link"
+                                   asp-controller="Projects"
+                                   asp-action="Index"
+                                   asp-route-page="1"
+                                   asp-route-name="@(ViewData["NameFilter"])"
+                                   asp-route-status="@(ViewData["StatusFilter"])">1</a>
+                            </li>
+                            @if (startPage > 2)
+                            {
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            }
+                        }
+
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link"
+                                   asp-controller="Projects"
+                                   asp-action="Index"
+                                   asp-route-page="@i"
+                                   asp-route-name="@(ViewData["NameFilter"])"
+                                   asp-route-status="@(ViewData["StatusFilter"])">@i</a>
+                            </li>
+                        }
+
+                        @if (endPage < totalPages)
+                        {
+                            @if (endPage < totalPages - 1)
+                            {
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            }
+                            <li class="page-item">
+                                <a class="page-link"
+                                   asp-controller="Projects"
+                                   asp-action="Index"
+                                   asp-route-page="@totalPages"
+                                   asp-route-name="@(ViewData["NameFilter"])"
+                                   asp-route-status="@(ViewData["StatusFilter"])">@totalPages</a>
+                            </li>
+                        }
+
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-controller="Projects"
+                               asp-action="Index"
+                               asp-route-page="@(currentPage + 1)"
+                               asp-route-name="@(ViewData["NameFilter"])"
+                               asp-route-status="@(ViewData["StatusFilter"])">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
+</div>
