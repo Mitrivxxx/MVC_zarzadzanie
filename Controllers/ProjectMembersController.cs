@@ -100,6 +100,19 @@ namespace MyMvcPostgresApp.Controllers
             };
 
             _context.ProjectMembers.Add(member);
+
+            // Utwórz powiadomienie dla użytkownika
+            var notification = new Notification
+            {
+                UserId = model.UserId,
+                Message = $"Zostałeś dodany do projektu '{project.Name}' jako {model.MemberRole}",
+                Type = "Success",
+                ProjectId = model.ProjectId,
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
 
             TempData["Success"] = $"Użytkownik {user.Login} został dodany do projektu";

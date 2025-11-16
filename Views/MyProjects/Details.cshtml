@@ -1,0 +1,150 @@
+﻿@model MyMvcPostgresApp.Models.Project
+
+@{
+    ViewData["Title"] = "Szczegóły projektu";
+    var allMembers = ViewBag.AllMembers as List<MyMvcPostgresApp.Models.ProjectMember>;
+    var myRole = ViewBag.MyRole as string;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-controller="MyProjects" asp-action="Index" class="btn btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h2 class="mb-0"><i class="bi bi-info-circle-fill me-2"></i>Szczegóły projektu</h2>
+                <p class="text-muted mb-0">Twoja rola: <strong>@myRole</strong></p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h3 class="mb-2">@Model.Name</h3>
+                        @{
+                            var badgeClass = Model.Status switch
+                            {
+                                "Active" => "bg-success",
+                                "Completed" => "bg-primary",
+                                "OnHold" => "bg-warning text-dark",
+                                "Cancelled" => "bg-danger",
+                                _ => "bg-secondary"
+                            };
+                        }
+                        <span class="badge @badgeClass fs-6">@Model.Status</span>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row g-4">
+                    <div class="col-md-12">
+                        <h6 class="text-muted mb-2"><i class="bi bi-file-text me-2"></i>Opis</h6>
+                        <p class="mb-0">
+                            @if (!string.IsNullOrWhiteSpace(Model.Description))
+                            {
+                                @Model.Description
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">Brak opisu</span>
+                            }
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2"><i class="bi bi-calendar-check me-2"></i>Data rozpoczęcia</h6>
+                        <p class="mb-0 fw-semibold">
+                            @if (Model.StartDate.HasValue)
+                            {
+                                @Model.StartDate.Value.ToString("dd MMMM yyyy")
+                            }
+                            else
+                            {
+                                <span class="text-muted">Nie określono</span>
+                            }
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2"><i class="bi bi-calendar-x me-2"></i>Data zakończenia</h6>
+                        <p class="mb-0 fw-semibold">
+                            @if (Model.EndDate.HasValue)
+                            {
+                                @Model.EndDate.Value.ToString("dd MMMM yyyy")
+                            }
+                            else
+                            {
+                                <span class="text-muted">Nie określono</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zespół projektu -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3"><i class="bi bi-people-fill me-2"></i>Zespół projektu</h5>
+                @if (allMembers != null && allMembers.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Użytkownik</th>
+                                    <th>Rola systemowa</th>
+                                    <th>Rola w projekcie</th>
+                                    <th>Data przypisania</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var member in allMembers)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">@member.User.Login</div>
+                                        </td>
+                                        <td>
+                                            @{
+                                                var userBadgeClass = member.User.Role switch
+                                                {
+                                                    "Admin" => "bg-danger",
+                                                    "Kierownik" => "bg-warning text-dark",
+                                                    "HR" => "bg-info",
+                                                    "Pracownik" => "bg-success",
+                                                    "Stażysta" => "bg-secondary",
+                                                    _ => "bg-primary"
+                                                };
+                                            }
+                                            <span class="badge @userBadgeClass">@member.User.Role</span>
+                                        </td>
+                                        <td>
+                                            @{
+                                                var roleBadgeClass = member.Role switch
+                                                {
+                                                    "Lead" => "bg-danger",
+                                                    "Contributor" => "bg-info",
+                                                    _ => "bg-secondary"
+                                                };
+                                            }
+                                            <span class="badge @roleBadgeClass">@member.Role</span>
+                                        </td>
+                                        <td>@member.AssignedAt.ToString("dd.MM.yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Brak członków zespołu</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,106 @@
+﻿@model IEnumerable<MyMvcPostgresApp.Models.ProjectMember>
+
+@{
+    ViewData["Title"] = "Moje projekty";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="mb-4">
+            <h2 class="mb-0"><i class="bi bi-folder-fill me-2"></i>Moje projekty</h2>
+            <p class="text-muted mb-0">Projekty, do których jesteś przypisany</p>
+        </div>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (Model.Any())
+        {
+            <div class="row g-4">
+                @foreach (var member in Model)
+                {
+                    var project = member.Project;
+                    var badgeClass = project.Status switch
+                    {
+                        "Active" => "bg-success",
+                        "Completed" => "bg-primary",
+                        "OnHold" => "bg-warning text-dark",
+                        "Cancelled" => "bg-danger",
+                        _ => "bg-secondary"
+                    };
+
+                    var roleBadgeClass = member.Role switch
+                    {
+                        "Lead" => "bg-danger",
+                        "Contributor" => "bg-info",
+                        _ => "bg-secondary"
+                    };
+
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title mb-0">@project.Name</h5>
+                                    <span class="badge @badgeClass">@project.Status</span>
+                                </div>
+
+                                <p class="card-text text-muted small mb-3">
+                                    @if (!string.IsNullOrWhiteSpace(project.Description))
+                                    {
+                                        @(project.Description.Length > 100 ? project.Description.Substring(0, 100) + "..." : project.Description)
+                                    }
+                                    else
+                                    {
+                                        <span class="fst-italic">Brak opisu</span>
+                                    }
+                                </p>
+
+                                <div class="mb-3">
+                                    <span class="badge @roleBadgeClass">
+                                        <i class="bi bi-person-badge me-1"></i>@member.Role
+                                    </span>
+                                </div>
+
+                                <div class="small text-muted mb-3">
+                                    <div class="mb-1">
+                                        <i class="bi bi-calendar-check me-1"></i>
+                                        Start: @(project.StartDate?.ToString("dd.MM.yyyy") ?? "Nie określono")
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-calendar-x me-1"></i>
+                                        Koniec: @(project.EndDate?.ToString("dd.MM.yyyy") ?? "Nie określono")
+                                    </div>
+                                </div>
+
+                                <a asp-controller="MyProjects"
+                                   asp-action="Details"
+                                   asp-route-id="@project.Id"
+                                   class="btn btn-primary w-100">
+                                    <i class="bi bi-eye me-1"></i>Zobacz szczegóły
+                                </a>
+                            </div>
+                            <div class="card-footer bg-light text-muted small">
+                                <i class="bi bi-clock-history me-1"></i>Przypisano: @member.AssignedAt.ToString("dd.MM.yyyy")
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-folder-x fs-1 text-muted d-block mb-3"></i>
+                    <h5 class="text-muted">Brak projektów</h5>
+                    <p class="text-muted mb-0">Nie jesteś jeszcze przypisany do żadnego projektu</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
