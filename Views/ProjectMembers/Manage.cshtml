@@ -1,0 +1,204 @@
+﻿@model MyMvcPostgresApp.ViewModels.ManageProjectMembersViewModel
+
+@{
+    ViewData["Title"] = "Zarządzaj zespołem projektu";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-controller="Projects" asp-action="Details" asp-route-id="@Model.ProjectId" class="btn btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h2 class="mb-0"><i class="bi bi-people-fill me-2"></i>Zespół projektu</h2>
+                <p class="text-muted mb-0">@Model.ProjectName</p>
+            </div>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Dodawanie nowego członka -->
+        @if (Model.AvailableUsers.Any())
+        {
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3"><i class="bi bi-person-plus-fill me-2"></i>Dodaj członka zespołu</h5>
+                    <form asp-controller="ProjectMembers" asp-action="Add" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <label class="form-label">Użytkownik</label>
+                                <select name="UserId" class="form-select" required>
+                                    <option value="">Wybierz użytkownika...</option>
+                                    @foreach (var user in Model.AvailableUsers)
+                                    {
+                                        <option value="@user.Id">@user.Login (@user.Role)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Rola w projekcie</label>
+                                <select name="MemberRole" class="form-select" required>
+                                    <option value="Member">Member - Członek zespołu</option>
+                                    <option value="Lead">Lead - Lider projektu</option>
+                                    <option value="Contributor">Contributor - Współpracownik</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-plus-lg me-1"></i>Dodaj
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle-fill me-2"></i>Wszyscy użytkownicy są już przypisani do tego projektu
+            </div>
+        }
+
+        <!-- Lista członków -->
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Użytkownik</th>
+                                <th>Rola systemowa</th>
+                                <th>Rola w projekcie</th>
+                                <th>Data przypisania</th>
+                                <th class="text-end pe-4">Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Members.Any())
+                            {
+                                @foreach (var member in Model.Members)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div>
+                                                <div class="fw-semibold">@member.User.Login</div>
+                                                <small class="text-muted">ID: @member.User.Id</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @{
+                                                var userBadgeClass = member.User.Role switch
+                                                {
+                                                    "Admin" => "bg-danger",
+                                                    "Kierownik" => "bg-warning text-dark",
+                                                    "HR" => "bg-info",
+                                                    "Pracownik" => "bg-success",
+                                                    "Stażysta" => "bg-secondary",
+                                                    _ => "bg-primary"
+                                                };
+                                            }
+                                            <span class="badge @userBadgeClass">@member.User.Role</span>
+                                        </td>
+                                        <td>
+                                            <form asp-controller="ProjectMembers"
+                                                  asp-action="UpdateRole"
+                                                  method="post"
+                                                  class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@member.Id" />
+                                                <input type="hidden" name="projectId" value="@Model.ProjectId" />
+                                                <select name="role"
+                                                        class="form-select form-select-sm d-inline-block w-auto"
+                                                        onchange="this.form.submit()">
+                                                    <option value="Member" selected="@(member.Role == "Member")">Member</option>
+                                                    <option value="Lead" selected="@(member.Role == "Lead")">Lead</option>
+                                                    <option value="Contributor" selected="@(member.Role == "Contributor")">Contributor</option>
+                                                </select>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <div>@member.AssignedAt.ToString("dd.MM.yyyy")</div>
+                                            <small class="text-muted">@member.AssignedAt.ToString("HH:mm")</small>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#removeModal@(member.Id)">
+                                                <i class="bi bi-person-dash"></i> Usuń
+                                            </button>
+
+                                            <!-- Modal potwierdzenia usunięcia -->
+                                            <div class="modal fade" id="removeModal@(member.Id)" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Potwierdź usunięcie</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Czy na pewno chcesz usunąć użytkownika <strong>@member.User.Login</strong> z projektu?</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                                                            <form asp-controller="ProjectMembers"
+                                                                  asp-action="Remove"
+                                                                  method="post"
+                                                                  class="d-inline">
+                                                                @Html.AntiForgeryToken()
+                                                                <input type="hidden" name="id" value="@member.Id" />
+                                                                <input type="hidden" name="projectId" value="@Model.ProjectId" />
+                                                                <button type="submit" class="btn btn-danger">Usuń</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="bi bi-people fs-1 d-block mb-2"></i>
+                                        <p class="mb-0">Brak członków zespołu. Dodaj pierwszego członka powyżej.</p>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @if (Model.Members.Any())
+            {
+                <div class="card-footer bg-light">
+                    <div class="text-muted small">
+                        Łączna liczba członków: <strong>@Model.Members.Count</strong>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

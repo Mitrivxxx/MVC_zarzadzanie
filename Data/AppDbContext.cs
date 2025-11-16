@@ -9,6 +9,7 @@ namespace MyMvcPostgresApp.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectMember> ProjectMembers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +22,24 @@ namespace MyMvcPostgresApp.Data
             modelBuilder.Entity<Project>()
                 .Property(p => p.Status)
                 .HasDefaultValue("Active");
+
+            // Konfiguracja relacji ProjectMember
+            modelBuilder.Entity<ProjectMember>()
+                .HasOne(pm => pm.Project)
+                .WithMany()
+                .HasForeignKey(pm => pm.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProjectMember>()
+                .HasOne(pm => pm.User)
+                .WithMany()
+                .HasForeignKey(pm => pm.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Unikalny indeks - użytkownik może być przypisany do projektu tylko raz
+            modelBuilder.Entity<ProjectMember>()
+                .HasIndex(pm => new { pm.ProjectId, pm.UserId })
+                .IsUnique();
         }
     }
 }
