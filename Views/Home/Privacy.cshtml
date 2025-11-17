@@ -1,6 +1,431 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Polityka Prywatności";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<style>
+    .privacy-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .privacy-hero {
+        background: linear-gradient(135deg, rgba(13,110,253,0.1), rgba(13,202,240,0.05));
+        padding: 3rem 0;
+        margin-bottom: 3rem;
+        border-radius: 1rem;
+    }
+
+    .privacy-card {
+        border-left: 4px solid #0d6efd;
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .privacy-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #0d6efd, #0a58ca);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .toc {
+        position: sticky;
+        top: 20px;
+    }
+
+    .toc-link {
+        color: #6c757d;
+        text-decoration: none;
+        display: block;
+        padding: 0.5rem 0;
+        transition: color 0.3s;
+    }
+
+        .toc-link:hover {
+            color: #0d6efd;
+        }
+
+        .toc-link.active {
+            color: #0d6efd;
+            font-weight: 600;
+        }
+
+    .last-updated {
+        background: #e7f3ff;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border-left: 4px solid #0d6efd;
+    }
+</style>
+
+<div class="privacy-hero text-center">
+    <div class="container">
+        <i class="bi bi-shield-check fs-1 text-primary mb-3 d-block"></i>
+        <h1 class="fw-bold mb-3">Polityka Prywatności</h1>
+        <p class="lead text-muted mb-0">
+            Twoja prywatność jest dla nas priorytetem. Dowiedz się, jak chronimy Twoje dane.
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Table of Contents -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="toc">
+                <h6 class="fw-bold mb-3">Spis treści</h6>
+                <nav>
+                    <a href="#intro" class="toc-link">1. Wprowadzenie</a>
+                    <a href="#data-collection" class="toc-link">2. Zbierane dane</a>
+                    <a href="#data-usage" class="toc-link">3. Wykorzystanie danych</a>
+                    <a href="#data-protection" class="toc-link">4. Ochrona danych</a>
+                    <a href="#cookies" class="toc-link">5. Pliki cookies</a>
+                    <a href="#user-rights" class="toc-link">6. Twoje prawa</a>
+                    <a href="#data-sharing" class="toc-link">7. Udostępnianie danych</a>
+                    <a href="#changes" class="toc-link">8. Zmiany w polityce</a>
+                    <a href="#contact" class="toc-link">9. Kontakt</a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <div class="last-updated mb-4">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-calendar-check me-2 text-primary"></i>
+                    <strong>Ostatnia aktualizacja:</strong>&nbsp;17 listopada 2025
+                </div>
+            </div>
+
+            <!-- Section 1 -->
+            <div id="intro" class="privacy-section">
+                <div class="privacy-icon">
+                    <i class="bi bi-info-circle-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-3">1. Wprowadzenie</h3>
+                <p>
+                    PM Suite ("my", "nas", "nasz") zobowiązuje się do ochrony prywatności użytkowników naszej platformy.
+                    Niniejsza Polityka Prywatności wyjaśnia, jakie dane zbieramy, jak je wykorzystujemy i jakie prawa
+                    przysługują Ci w związku z przetwarzaniem Twoich danych osobowych.
+                </p>
+                <p>
+                    Korzystając z PM Suite, akceptujesz praktyki opisane w niniejszej polityce. Jeśli nie zgadzasz się
+                    z naszą polityką, prosimy o nieużywanie naszych usług.
+                </p>
+            </div>
+
+            <!-- Section 2 -->
+            <div id="data-collection" class="privacy-section">
+                <div class="privacy-icon">
+                    <i class="bi bi-collection-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-3">2. Zbierane dane</h3>
+                <p>W ramach świadczenia naszych usług zbieramy następujące kategorie danych:</p>
+
+                <div class="privacy-card">
+                    <h5 class="fw-bold mb-2">
+                        <i class="bi bi-person-fill text-primary me-2"></i>Dane rejestracyjne
+                    </h5>
+                    <ul class="mb-0">
+                        <li>Login/nazwa użytkownika</li>
+                        <li>Hasło (przechowywane w formie zaszyfrowanej)</li>
+                        <li>Adres e-mail (jeśli został podany)</li>
+                        <li>Rola w systemie</li>
+                    </ul>
+                </div>
+
+                <div class="privacy-card">
+                    <h5 class="fw-bold mb-2">
+                        <i class="bi bi-graph-up text-primary me-2"></i>Dane o aktywności
+                    </h5>
+                    <ul class="mb-0">
+                        <li>Informacje o projektach, które tworzysz i zarządzasz</li>
+                        <li>Zadania i przypisania do projektów</li>
+                        <li>Daty i czasy logowania</li>
+                        <li>Historia działań w systemie</li>
+                    </ul>
+                </div>
+
+                <div class="privacy-card">
+                    <h5 class="fw-bold mb-2">
+                        <i class="bi bi-laptop text-primary me-2"></i>Dane techniczne
+                    </h5>
+                    <ul class="mb-0">
+                        <li>Adres IP</li>
+                        <li>Typ przeglądarki i system operacyjny</li>
+                        <li>Pliki cookies i podobne technologie</li>
+                        <li>Logi serwera</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 3 -->
+            <div id="data-usage" class="privacy-section">
+                <div class="privacy-icon">
+                    <i class="bi bi-gear-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-3">3. Wykorzystanie danych</h3>
+                <p>Twoje dane osobowe przetwarzamy w następujących celach:</p>
+                <ul>
+                    <li><strong>Świadczenie usług</strong> - umożliwienie korzystania z platformy PM Suite</li>
+                    <li><strong>Uwierzytelnianie</strong> - weryfikacja tożsamości użytkownika podczas logowania</li>
+                    <li><strong>Personalizacja</strong> - dostosowanie interfejsu i funkcji do Twoich potrzeb</li>
+                    <li><strong>Komunikacja</strong> - wysyłanie powiadomień o ważnych wydarzeniach w projektach</li>
+                    <li><strong>Bezpieczeństwo</strong> - ochrona przed nieautoryzowanym dostępem i nadużyciami</li>
+                    <li><strong>Analiza i ulepszenia</strong> - doskonalenie naszych usług na podstawie wzorców użytkowania</li>
+                    <li><strong>Zgodność z prawem</strong> - spełnienie wymogów prawnych i regulacyjnych</li>
+                </ul>
+            </div>
+
+            <!-- Section 4 -->
+            <div id="data-protection" class="privacy-section">
+                <div class="privacy-icon">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-3">4. Ochrona danych</h3>
+                <p>
+                    Stosujemy odpowiednie środki techniczne i organizacyjne w celu ochrony Twoich danych osobowych
+                    przed nieautoryzowanym dostępem, utratą, zniszczeniem lub zmianą.
+                </p>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <i class="bi bi-lock-fill text-primary fs-3 mb-3 d-block"></i>
+                                <h6 class="fw-bold">Szyfrowanie</h6>
+                                <p class="small text-muted mb-0">
+                                    Wszystkie dane przesyłane między Twoją przeglądarką a naszymi serwerami są
+                                    szyfrowane przy użyciu protokołu SSL/TLS.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <i class="bi bi-hdd-fill text-primary fs-3 mb-3 d-block"></i>
+                                <h6 class="fw-bold">Backup</h6>
+                                <p class="small text-muted mb-0">
+                                    Regularne tworzenie kopii zapasowych chroni Twoje dane przed przypadkową utratą.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <i class="bi bi-key-fill text-primary fs-3 mb-3 d-block"></i>
+                                <h6 class="fw-bold">Kontrola dostępu</h6>
+                                <p class="small text-muted mb-0">
+                                    Dostęp do danych jest ściśle kontrolowany i ograniczony tylko do
+                                    upoważnionego personelu.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <i class="bi bi-shield-check-fill text-primary fs-3 mb-3 d-block"></i>
+                                <h6 class="fw-bold">Monitoring</h6>
+                                <p class="small text-muted mb-0">
+                                    Ciągłe monitorowanie systemów pozwala nam wykrywać i reagować na
+                                    potencjalne zagrożenia.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5 -->
+            <div id="cookies" class="privacy-section">
+                <div class="privacy-icon">
+                    <i class="bi bi-cookie"></i>
+                </div>
+                <h3 class="fw-bold mb-3">5. Pliki cookies</h3>
+                <p>
+                    PM Suite wykorzystuje pliki cookies i podobne technologie do zapewnienia funkcjonalności
+                    platformy i poprawy doświadczenia użytkownika.
+                </p>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <strong>Co to są cookies?</strong> To małe pliki tekstowe przechowywane na Twoim urządzeniu,
+                    które pomagają nam rozpoznać Cię podczas kolejnych wizyt.
+                </div>
+                <p><strong>Używamy następujących rodzajów cookies:</strong></p>
+                <ul>
+                    <li><strong>Niezbędne cookies</strong> - wymagane do działania podstawowych funkcji (np. logowanie)</li>
+                    <li><strong>Funkcjonalne cookies</strong> - zapamiętują Twoje preferencje i ustawienia</li>
+                    <li><strong>Analityczne cookies</strong> - pomagają nam zrozumieć, jak korzystasz z platformy</li>
+                </ul>
+                <p>
+                    Możesz zarządzać ustawieniami cookies w swojej przeglądarce. Pamiętaj jednak, że wyłączenie
+                    niektórych cookies może wpłynąć na funkcjonalność platformy.
+                </p>
+            </div>
+
+            <!-- Section 6 -->
+            <div id="user-rights" class="privacy-section">
+                <div class="privacy-icon">
+                    <i class="bi bi-person-check-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-3">6. Twoje prawa</h3>
+                <p>Zgodnie z RODO (Rozporządzenie o Ochronie Danych Osobowych) przysługują Ci następujące prawa:</p>
+
+                <div class="privacy-card">
+                    <h6 class="fw-bold"><i class="bi bi-eye-fill text-primary me-2"></i>Prawo dostępu</h6>
+                    <p class="mb-0 small">Możesz zażądać informacji o tym, jakie dane osobowe przetwarzamy na Twój temat.</p>
+                </div>
+
+                <div class="privacy-card">
+                    <h6 class="fw-bold"><i class="bi bi-pencil-fill text-primary me-2"></i>Prawo do sprostowania</h6>
+                    <p class="mb-0 small">Możesz poprosić o korektę nieprawidłowych lub niekompletnych danych.</p>
+                </div>
+
+                <div class="privacy-card">
+                    <h6 class="fw-bold"><i class="bi bi-trash-fill text-primary me-2"></i>Prawo do usunięcia</h6>
+                    <p class="mb-0 small">Możesz zażądać usunięcia swoich danych osobowych ("prawo do bycia zapomnianym").</p>
+                </div>
+
+                <div class="privacy-card">
+                    <h6 class="fw-bold"><i class="bi bi-hand-stop-fill text-primary me-2"></i>Prawo do ograniczenia przetwarzania</h6>
+                    <p class="mb-0 small">Możesz zażądać ograniczenia przetwarzania swoich danych w określonych okolicznościach.</p>
+                </div>
+
+                <div class="privacy-card">
+                    <h6 class="fw-bold"><i class="bi bi-box-arrow-right text-primary me-2"></i>Prawo do przenoszenia danych</h6>
+                    <p class="mb-0 small">Możesz otrzymać swoje dane w ustrukturyzowanym formacie lub przenieść je do innego administratora.</p>
+                </div>
+
+                <div class="privacy-card">
+                    <h6 class="fw-bold"><i class="bi bi-x-circle-fill text-primary me-2"></i>Prawo do sprzeciwu</h6>
+                    <p class="mb-0 small">Możesz wnieść sprzeciw wobec przetwarzania swoich danych w określonych celach.</p>
+                </div>
+
+                <div class="alert alert-primary mt-3">
+                    <i class="bi bi-envelope-fill me-2"></i>
+                    Aby skorzystać z powyższych praw, skontaktuj się z nami pod adresem:
+                    <strong>privacy@pmsuite.pl</strong>
+                </div>
+            </div>
+
+            <!-- Section 7 -->
+            <div id="data-sharing" class="privacy-section">
+                <div class="privacy-icon">
+                    <i class="bi bi-share-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-3">7. Udostępnianie danych</h3>
+                <p>
+                    Nie sprzedajemy, nie wynajmujemy ani nie udostępniamy Twoich danych osobowych osobom trzecim
+                    w celach marketingowych. Możemy udostępniać dane tylko w następujących przypadkach:
+                </p>
+                <ul>
+                    <li><strong>Dostawcy usług</strong> - zaufani partnerzy pomagający nam w świadczeniu usług (hosting, wsparcie techniczne)</li>
+                    <li><strong>Wymogi prawne</strong> - gdy jesteśmy zobowiązani do tego przez prawo lub w odpowiedzi na ważne żądania organów państwowych</li>
+                    <li><strong>Ochrona praw</strong> - gdy jest to konieczne do ochrony naszych praw, prywatności, bezpieczeństwa lub własności</li>
+                    <li><strong>Za Twoją zgodą</strong> - w innych przypadkach, za Twoją wyraźną zgodą</li>
+                </ul>
+            </div>
+
+            <!-- Section 8 -->
+            <div id="changes" class="privacy-section">
+                <div class="privacy-icon">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+                <h3 class="fw-bold mb-3">8. Zmiany w polityce prywatności</h3>
+                <p>
+                    Zastrzegamy sobie prawo do aktualizacji niniejszej Polityki Prywatności w dowolnym czasie.
+                    O wszelkich istotnych zmianach poinformujemy Cię poprzez:
+                </p>
+                <ul>
+                    <li>Powiadomienie w systemie PM Suite</li>
+                    <li>E-mail na adres podany podczas rejestracji (jeśli został podany)</li>
+                    <li>Informację na stronie głównej platformy</li>
+                </ul>
+                <p>
+                    Zachęcamy do okresowego przeglądania tej strony, aby być na bieżąco z naszą Polityką Prywatności.
+                </p>
+            </div>
+
+            <!-- Section 9 -->
+            <div id="contact" class="privacy-section">
+                <div class="privacy-icon">
+                    <i class="bi bi-envelope-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-3">9. Kontakt</h3>
+                <p>
+                    Jeśli masz pytania dotyczące niniejszej Polityki Prywatności lub sposobu, w jaki przetwarzamy
+                    Twoje dane osobowe, skontaktuj się z nami:
+                </p>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-building text-primary me-2"></i>Dane kontaktowe
+                                </h6>
+                                <p class="mb-2">
+                                    <strong>PM Suite Sp. z o.o.</strong>
+                                </p>
+                                <p class="mb-2 text-muted small">
+                                    <i class="bi bi-geo-alt-fill me-2"></i>ul. Projektowa 123<br>
+                                    <span class="ms-4">00-001 Warszawa, Polska</span>
+                                </p>
+                                <p class="mb-2 text-muted small">
+                                    <i class="bi bi-envelope-fill me-2"></i>privacy@pmsuite.pl
+                                </p>
+                                <p class="mb-0 text-muted small">
+                                    <i class="bi bi-telephone-fill me-2"></i>+48 22 123 45 67
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-person-badge text-primary me-2"></i>Inspektor Ochrony Danych
+                                </h6>
+                                <p class="mb-2 text-muted small">
+                                    Jeśli masz pytania dotyczące przetwarzania danych osobowych, możesz
+                                    skontaktować się z naszym Inspektorem Ochrony Danych:
+                                </p>
+                                <p class="mb-0 text-muted small">
+                                    <i class="bi bi-envelope-fill me-2"></i>iod@pmsuite.pl
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Prawo do skargi:</strong> Masz prawo wnieść skargę do organu nadzorczego
+                    (w Polsce: Prezes Urzędu Ochrony Danych Osobowych) jeśli uważasz, że przetwarzanie
+                    Twoich danych osobowych narusza przepisy o ochronie danych.
+                </div>
+            </div>
+
+            <!-- Final CTA -->
+            <div class="card border-0 shadow-sm bg-primary text-white mt-5">
+                <div class="card-body p-4 text-center">
+                    <h5 class="fw-bold mb-3">Masz pytania dotyczące prywatności?</h5>
+                    <p class="mb-3">Nasz zespół chętnie odpowie na wszystkie Twoje wątpliwości</p>
+                    <a href="@Url.Action("Index", "Contact")" class="btn btn-light btn-lg">
+                        <i class="bi bi-chat-dots-fill me-2"></i>Skontaktuj się z nami
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

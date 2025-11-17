@@ -1,0 +1,433 @@
+﻿@{
+    ViewData["Title"] = "Kontakt";
+}
+
+<style>
+    .contact-hero {
+        background: linear-gradient(135deg, rgba(13,110,253,0.1), rgba(13,202,240,0.05));
+        padding: 3rem 0;
+        margin-bottom: 3rem;
+        border-radius: 1rem;
+    }
+
+    .contact-card {
+        border-radius: 1rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        border: none;
+        height: 100%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+    .contact-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+    }
+
+    .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #0d6efd;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .map-container {
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .social-link {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+    .faq-item {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: box-shadow 0.3s ease;
+    }
+
+        .faq-item:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+</style>
+
+<div class="contact-hero text-center">
+    <div class="container">
+        <i class="bi bi-envelope-heart fs-1 text-primary mb-3 d-block"></i>
+        <h1 class="fw-bold mb-3">Skontaktuj się z nami</h1>
+        <p class="lead text-muted mb-0">
+            Jesteśmy tutaj, aby pomóc. Wybierz najwygodniejszy dla Ciebie sposób kontaktu.
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Contact Methods -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-3">
+            <div class="card contact-card">
+                <div class="card-body text-center p-4">
+                    <div class="contact-icon mx-auto" style="background: linear-gradient(135deg, #0d6efd, #0a58ca); color: white;">
+                        <i class="bi bi-envelope-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">E-mail</h5>
+                    <p class="text-muted small mb-3">Napisz do nas</p>
+                    <a href="mailto:hello@pmsuite.pl" class="text-decoration-none">
+                        hello@pmsuite.pl
+                    </a>
+                    <div class="mt-2 text-muted small">
+                        <i class="bi bi-clock me-1"></i>Odpowiedź w 24h
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card contact-card">
+                <div class="card-body text-center p-4">
+                    <div class="contact-icon mx-auto" style="background: linear-gradient(135deg, #198754, #146c43); color: white;">
+                        <i class="bi bi-telephone-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Telefon</h5>
+                    <p class="text-muted small mb-3">Zadzwoń do nas</p>
+                    <a href="tel:+48221234567" class="text-decoration-none">
+                        +48 22 123 45 67
+                    </a>
+                    <div class="mt-2 text-muted small">
+                        <i class="bi bi-clock me-1"></i>Pn-Pt 9:00-17:00
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card contact-card">
+                <div class="card-body text-center p-4">
+                    <div class="contact-icon mx-auto" style="background: linear-gradient(135deg, #6f42c1, #5a32a3); color: white;">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Live Chat</h5>
+                    <p class="text-muted small mb-3">Czat na żywo</p>
+                    <button class="btn btn-sm btn-outline-primary" onclick="alert('Chat będzie dostępny wkrótce!')">
+                        Rozpocznij czat
+                    </button>
+                    <div class="mt-2 text-muted small">
+                        <i class="bi bi-circle-fill text-success me-1" style="font-size: 0.5rem;"></i>Online
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card contact-card">
+                <div class="card-body text-center p-4">
+                    <div class="contact-icon mx-auto" style="background: linear-gradient(135deg, #dc3545, #bb2d3b); color: white;">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Wsparcie</h5>
+                    <p class="text-muted small mb-3">Pomoc techniczna</p>
+                    <a href="mailto:support@pmsuite.pl" class="text-decoration-none">
+                        support@pmsuite.pl
+                    </a>
+                    <div class="mt-2 text-muted small">
+                        <i class="bi bi-clock me-1"></i>24/7 dla Enterprise
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row g-4">
+        <!-- Contact Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <h3 class="fw-bold mb-4">
+                        <i class="bi bi-send-fill text-primary me-2"></i>Wyślij wiadomość
+                    </h3>
+
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Imię i nazwisko <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" placeholder="Jan Kowalski" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    E-mail <span class="text-danger">*</span>
+                                </label>
+                                <input type="email" class="form-control" placeholder="jan.kowalski@example.com" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Telefon</label>
+                                <input type="tel" class="form-control" placeholder="+48 123 456 789">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Temat <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" required>
+                                    <option value="">Wybierz temat...</option>
+                                    <option value="general">Pytanie ogólne</option>
+                                    <option value="technical">Wsparcie techniczne</option>
+                                    <option value="billing">Płatności i rozliczenia</option>
+                                    <option value="feature">Prośba o nową funkcję</option>
+                                    <option value="bug">Zgłoszenie błędu</option>
+                                    <option value="partnership">Współpraca biznesowa</option>
+                                    <option value="other">Inne</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    Wiadomość <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" rows="6" placeholder="Opisz swoją sprawę..." required></textarea>
+                                <div class="form-text">Minimum 20 znaków</div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="gdprConsent" required>
+                                    <label class="form-check-label small" for="gdprConsent">
+                                        Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z
+                                        <a href="@Url.Action("Privacy", "Home")">Polityką Prywatności</a> <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="newsletter">
+                                    <label class="form-check-label small" for="newsletter">
+                                        Chcę otrzymywać newsletter z informacjami o nowościach i promocjach
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-lg px-5">
+                                    <i class="bi bi-send-fill me-2"></i>Wyślij wiadomość
+                                </button>
+                                <p class="text-muted small mt-3 mb-0">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Odpowiemy na Twoją wiadomość w ciągu 24 godzin (dni robocze)
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-4">
+                        <i class="bi bi-question-circle-fill text-primary me-2"></i>Szybkie odpowiedzi
+                    </h4>
+
+                    <div class="faq-item">
+                        <h6 class="fw-bold mb-2">
+                            <i class="bi bi-chevron-right text-primary me-2"></i>
+                            Jak mogę zresetować hasło?
+                        </h6>
+                        <p class="text-muted small mb-0">
+                            Na stronie logowania kliknij "Zapomniałeś hasła?" i postępuj zgodnie z instrukcjami
+                            wysłanymi na Twój e-mail.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h6 class="fw-bold mb-2">
+                            <i class="bi bi-chevron-right text-primary me-2"></i>
+                            Jak mogę zmienić plan subskrypcji?
+                        </h6>
+                        <p class="text-muted small mb-0">
+                            Przejdź do Ustawień konta → Subskrypcja → Zmień plan. Zmiany są natychmiastowe
+                            i rozliczane proporcjonalnie.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h6 class="fw-bold mb-2">
+                            <i class="bi bi-chevron-right text-primary me-2"></i>
+                            Czy oferujecie szkolenia dla zespołów?
+                        </h6>
+                        <p class="text-muted small mb-0">
+                            Tak! Klienci planu Enterprise otrzymują dedykowane szkolenia. Skontaktuj się z nami
+                            po szczegóły.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h6 class="fw-bold mb-2">
+                            <i class="bi bi-chevron-right text-primary me-2"></i>
+                            Jak bezpieczne są moje dane?
+                        </h6>
+                        <p class="text-muted small mb-0">
+                            Stosujemy najwyższe standardy bezpieczeństwa: szyfrowanie SSL/TLS, regularne backupy,
+                            zgodność z RODO. Więcej w <a href="@Url.Action("Privacy", "Home")">Polityce Prywatności</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Office Info -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-building text-primary me-2"></i>Nasze biuro
+                    </h5>
+                    <div class="info-box">
+                        <h6 class="fw-bold mb-2">PM Suite Sp. z o.o.</h6>
+                        <p class="mb-2 text-muted small">
+                            <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                            ul. Projektowa 123<br>
+                            <span class="ms-4">00-001 Warszawa</span><br>
+                            <span class="ms-4">Polska</span>
+                        </p>
+                        <p class="mb-2 text-muted small">
+                            <i class="bi bi-clock-fill text-primary me-2"></i>
+                            Pn-Pt: 9:00 - 17:00
+                        </p>
+                        <p class="mb-0 text-muted small">
+                            <i class="bi bi-cup-hot-fill text-primary me-2"></i>
+                            Zapraszamy na kawę!
+                        </p>
+                    </div>
+                    <a href="https://maps.google.com" target="_blank" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-map me-2"></i>Zobacz na mapie
+                    </a>
+                </div>
+            </div>
+
+            <!-- Map -->
+            <div class="map-container mb-4">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.2859022773447!2d21.01223431594658!3d52.22967797975771!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471ecc8cf2f3a8c3%3A0x3e7d9d5a0f9a3c3!2sWarszawa%2C%20Polska!5e0!3m2!1spl!2spl!4v1234567890"
+                        width="100%"
+                        height="250"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy">
+                </iframe>
+            </div>
+
+            <!-- Social Media -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-share-fill text-primary me-2"></i>Social Media
+                    </h5>
+                    <p class="text-muted small mb-3">Śledź nas w mediach społecznościowych</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="#" class="social-link" style="background: linear-gradient(135deg, #1877f2, #0c63d4); color: white;" title="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link" style="background: linear-gradient(135deg, #1da1f2, #0d8bd9); color: white;" title="Twitter">
+                            <i class="bi bi-twitter-x"></i>
+                        </a>
+                        <a href="#" class="social-link" style="background: linear-gradient(135deg, #0077b5, #005885); color: white;" title="LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                        <a href="#" class="social-link" style="background: linear-gradient(135deg, #c13584, #e1306c); color: white;" title="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" style="background: linear-gradient(135deg, #ff0000, #cc0000); color: white;" title="YouTube">
+                            <i class="bi bi-youtube"></i>
+                        </a>
+                        <a href="#" class="social-link" style="background: linear-gradient(135deg, #333, #000); color: white;" title="GitHub">
+                            <i class="bi bi-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Contact -->
+            <div class="card border-danger shadow-sm">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-danger mb-2">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Pilna sprawa?
+                    </h6>
+                    <p class="small mb-3">
+                        W przypadku krytycznych problemów technicznych:
+                    </p>
+                    <a href="tel:+48221234567" class="btn btn-danger w-100 mb-2">
+                        <i class="bi bi-telephone-fill me-2"></i>+48 22 123 45 67
+                    </a>
+                    <p class="small text-muted mb-0">
+                        Dostępne 24/7 dla klientów Enterprise
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom CTA -->
+    <div class="card border-0 shadow-sm mt-5" style="background: linear-gradient(135deg, #0d6efd, #0a58ca); color: white;">
+        <div class="card-body p-5 text-center">
+            <h3 class="fw-bold mb-3">Nie znalazłeś odpowiedzi?</h3>
+            <p class="lead mb-4 opacity-90">
+                Nasz zespół wsparcia jest dostępny i gotowy do pomocy
+            </p>
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <a href="mailto:hello@pmsuite.pl" class="btn btn-light btn-lg">
+                    <i class="bi bi-envelope-fill me-2"></i>Napisz do nas
+                </a>
+                <button class="btn btn-outline-light btn-lg" onclick="alert('Chat będzie dostępny wkrótce!')">
+                    <i class="bi bi-chat-dots-fill me-2"></i>Rozpocznij czat
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Prevent form submission for demo
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Wiadomość została wysłana! (Demo - formularz nie działa rzeczywiście)');
+    });
+</script>
