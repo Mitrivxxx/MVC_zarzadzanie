@@ -1,0 +1,89 @@
+dist to skrót od „distribution” – czyli folder, w którym znajduje się zbudowana, gotowa do uruchomienia wersja aplikacji. To efekt końcowy procesu budowania (np. przez Vite, Bun, Webpack), który można wysłać na serwer lub hostować online.
+
+Bundler to narzędzie, które łączy wiele plików źródłowych (JavaScript, CSS, obrazki itd.) w jeden lub kilka zoptymalizowanych plików, gotowych do uruchomienia w przeglądarce. Dzięki temu aplikacja działa szybciej i sprawniej.
+
+package.json Zawiera ogólne informacje o projekcie i jego zależnościach
+
+package-lock.json Zawiera dokładne wersje wszystkich zainstalowanych pakietów – także ich zależności.
+
+Web Vitals (takei SEO) to zestaw wskaźników opracowanych przez Google, które mierzą jakość doświadczenia użytkownika na stronie internetowej – szczególnie pod kątem szybkości, interaktywności i stabilności wizualnej.
+
+Modularność to zasada projektowania systemów (np. aplikacji, kodu, interfejsów), która polega na dzieleniu całości na mniejsze, niezależne i łatwe do zarządzania części – czyli moduły.
+
+.lock pliki blokujące wersje zależności, które zapewniają spójność i przewidywalność instalacji pakietów w projekcie (- Gwarantuje, że projekt będzie działał tak samo na każdym komputerze)
+
+git:
+	git branch nazwa-gałęzi- nowa
+	git "checkout/switch" nazwa-gałęzi- przelacz
+	git branch- get all
+	git status- gdize jestem
+	git branch -d nazwa-gałęzi- usuwa galaz
+	git restore --staged plik - usuniecie z stage
+	git log - niwypchniete commit
+	git reset - reset commmitow niewypchnietych
+	git stash / git stash pop -jak pracuje na złym branch i musze się przelaczyc na dobry
+PRZETESTUJ git rebase origin/dev - to samo co merge tylko czytelniejsze
+
+WebSocket to protokół komunikacyjny, który umożliwia stałe, dwukierunkowe połączenie między klientem (np. przeglądarką) a serwerem, co pozwala na przesyłanie danych w czasie rzeczywistym bez konieczności ciągłego odświeżania strony.
+
+mvp - projekt testowy, najtaniej, glowne funkcjonalności
+
+ctr+shift+p funkcje
+SHIFT+alt+f format
+ctr+f2 - zaznacza wszystkie takie same zmienne
+ctr+shift+k - usun cala linia
+
+
+? w interface - wartość opcjonalna
+
+SDK paczka narzędzi, która pomaga programistom tworzyć aplikacje dla konkretnej platformy, systemu lub technologii. 
+
+CI/CD - github
+
+GUI (Graphical User Interface) to graficzny interfejs użytkownika, czyli sposób komunikacji z komputerem lub aplikacją za pomocą elementów wizualnych — takich jak okna, ikony, przyciski, menu czy paski narzędzi.
+
+UX (User Experience) to skrót od doświadczenia użytkownika — czyli całościowe wrażenie, jakie użytkownik ma podczas korzystania z produktu, 
+
+QA to etap testowania jakości aplikacji
+
+Staging to środowisko przedprodukcyjne, które symuluje produkcję:
+
+MCP (Model Context Protocol) to otwarty standard komunikacji między modelami AI a zewnętrznymi systemami, który umożliwia modelom językowym (LLM) dostęp do aktualnych danych, narzędzi i usług w czasie rzeczywistym
+
+Alpine to lekka, szybka i bezpieczna dystrybucja systemu Linux, zaprojektowana z myślą o prostocie i minimalizmie — szczególnie popularna w środowiskach kontenerowych, takich jak Docker.
+
+Nginx (czyt. „engine-x”) to wydajny serwer HTTP i reverse proxy, który służy do obsługi stron internetowych, aplikacji webowych i ruchu sieciowego. Jest lekki, szybki i bardzo popularny w środowiskach produkcyjnych.
+
+Proxy (czyli „pośrednik”) to serwer pośredniczący, który przekazuje żądania od klienta (np. przeglądarki) do właściwego serwera (np. aplikacji backendowej).
+
+SSL / TLS = protokół szyfrowania ruchu HTTPS.
+
+Load balancing = rozdzielanie ruchu na wiele instancji backendu (np. wiele procesów .NET).
+
+Klaster (ang. cluster) to grupa połączonych ze sobą komputerów lub serwerów, które współpracują jak jeden system
+
+using Służy do importowania przestrzeni nazw 
+
+var-ustala typ zmiennej przy kompilacji
+
+DI Container – Dependency Injection Container Mechanizm do wstrzykiwania zależności (np. serwisów, repozytoriów) do klas
+
+Pipeline – potok przetwarzania żądań - ciąg middleware’ów, które obsługują każde żądanie HTTP
+np.: app.UseAuthentication();
+app.UseAuthorization();
+app.UseEndpoints(...);
+
+Npgsql to otwartoźródłowy dostawca danych ADO.NET dla PostgreSQL, umożliwiający aplikacjom .NET komunikację z bazą PostgreSQL.
+
+Workflow (czyli przepływ pracy) to uporządkowany zestaw kroków, zadań lub procesów, które prowadzą do osiągnięcia konkretnego celu.
+
+P2P (peer-to-peer) to model komunikacji w sieci, w którym wszystkie urządzenia są równorzędne – nie ma centralnego serwera,
+
+C# słowo kluczowe partial pozwala podzielić definicję klasy, struktury lub interfejsu na kilka plików. Kompilator traktuje je jako jedną całość
+
+Playwright i Cypress to nowoczesne frameworki do automatyzacji testów end-to-end (E2E) aplikacji webowych
+
+E2E (End-to-End) to rodzaj testów, które sprawdzają cały przepływ działania aplikacji — od początku do końca 
+
+PR - skrot pull request
+

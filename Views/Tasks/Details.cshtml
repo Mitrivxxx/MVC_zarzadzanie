@@ -1,0 +1,673 @@
+﻿@model MyMvcPostgresApp.ViewModels.TaskDetailsViewModel
+
+@{
+    ViewData["Title"] = "Szczegóły zadania";
+    var task = Model.Task;
+}
+
+<style>
+    .timeline-item {
+        position: relative;
+        padding-left: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-left: 2px solid #e9ecef;
+    }
+
+        .timeline-item:last-child {
+            border-left-color: transparent;
+            padding-bottom: 0;
+        }
+
+    .timeline-icon {
+        position: absolute;
+        left: -0.75rem;
+        top: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+    }
+
+    .comment-card {
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .attachment-card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .attachment-card:hover {
+            background: #f8f9fa;
+            border-color: #0d6efd;
+        }
+
+    .file-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+</style>
+
+
+@Html.AntiForgeryToken()
+<div class="row">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-controller="Tasks" asp-action="Board" asp-route-id="@task.ProjectId" class="btn btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div class="flex-grow-1">
+                <h2 class="mb-0">@task.Title</h2>
+                <div class="d-flex align-items-center gap-2 mt-2">
+                    @{
+                        var statusBadgeClass = task.Status switch
+                        {
+                            "ToDo" => "bg-secondary",
+                            "InProgress" => "bg-primary",
+                            "InReview" => "bg-info",
+                            "Done" => "bg-success",
+                            "Blocked" => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+
+                        var priorityBadgeClass = task.Priority switch
+                        {
+                            "Low" => "bg-secondary",
+                            "Medium" => "bg-primary",
+                            "High" => "bg-warning text-dark",
+                            "Critical" => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+                    }
+                    <span class="badge @statusBadgeClass">@task.Status</span>
+                    <span class="badge @priorityBadgeClass">@task.Priority</span>
+                    @if (!string.IsNullOrEmpty(task.Tags))
+                    {
+                        @foreach (var tag in task.Tags.Split(','))
+                        {
+                            <span class="badge bg-light text-dark"><i class="bi bi-tag me-1"></i>@tag.Trim()</span>
+                        }
+                    }
+                </div>
+            </div>
+            @if (Model.CanEdit)
+            {
+                <a asp-action="Edit" asp-route-id="@task.Id" class="btn btn-primary">
+                    <i class="bi bi-pencil me-1"></i>Edytuj
+                </a>
+            }
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Opis -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="bi bi-file-text me-2"></i>Opis
+                </h5>
+                @if (!string.IsNullOrEmpty(task.Description))
+                {
+                    <p class="mb-0" style="white-space: pre-line;">@task.Description</p>
+                }
+                else
+                {
+                    <p class="text-muted fst-italic mb-0">Brak opisu</p>
+                }
+            </div>
+        </div>
+
+        <!-- Postęp -->
+        @if (task.Status == "InProgress" || task.Status == "InReview")
+        {
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-graph-up me-2"></i>Postęp
+                    </h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Ukończono:</span>
+                        <strong>@task.ProgressPercentage%</strong>
+                    </div>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar" style="width: @task.ProgressPercentage%" aria-valuenow="@task.ProgressPercentage" aria-valuemin="0" aria-valuemax="100">
+                            @task.ProgressPercentage%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Załączniki -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-paperclip me-2"></i>Załączniki (@Model.Attachments.Count)
+                    </h5>
+                    @if (Model.CanComment)
+                    {
+                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                            <i class="bi bi-upload me-1"></i>Dodaj
+                        </button>
+                    }
+                </div>
+
+                @if (Model.Attachments.Any())
+                {
+                    <div class="d-flex flex-column gap-2">
+                        @foreach (var attachment in Model.Attachments)
+                        {
+                            <div class="attachment-card">
+                                <div class="file-icon">
+                                    @{
+                                        var extension = global::System.IO.Path.GetExtension(attachment.FileName).ToLowerInvariant();
+                                        string icon = extension switch
+                                        {
+                                            ".pdf" => "bi-file-pdf",
+                                            ".doc" => "bi-file-word",
+                                            ".docx" => "bi-file-word",
+                                            ".xls" => "bi-file-excel",
+                                            ".xlsx" => "bi-file-excel",
+                                            ".jpg" => "bi-file-image",
+                                            ".jpeg" => "bi-file-image",
+                                            ".png" => "bi-file-image",
+                                            ".gif" => "bi-file-image",
+                                            ".zip" => "bi-file-zip",
+                                            ".rar" => "bi-file-zip",
+                                            _ => "bi-file-earmark"
+                                        };
+                                    }
+                                    <i class="bi @icon"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">@attachment.FileName</div>
+                                    <small class="text-muted">
+                                        @((attachment.FileSize / 1024.0).ToString("F2")) KB •
+                                        Dodane przez @attachment.UploadedByUser.Login •
+                                        @attachment.UploadedAt.ToString("dd.MM.yyyy HH:mm")
+                                    </small>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <a href="@attachment.FilePath" target="_blank" class="btn btn-sm btn-outline-primary" download>
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                    
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center mb-0 py-3">
+                        <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                        Brak załączników
+                    </p>
+                }
+            </div>
+        </div>
+
+        <!-- Komentarze -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="bi bi-chat-dots me-2"></i>Komentarze (@Model.Comments.Count)
+                </h5>
+
+                @if (Model.CanComment)
+                {
+                    <form asp-action="AddComment" method="post" class="mb-4">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="TaskId" value="@task.Id" />
+                        <div class="mb-2">
+                            <textarea name="Content" class="form-control" rows="3" placeholder="Dodaj komentarz..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send me-1"></i>Wyślij
+                        </button>
+                    </form>
+                }
+
+                @if (Model.Comments.Any())
+                {
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <div class="comment-card">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.875rem;">
+                                        @comment.User.Login.Substring(0, 1).ToUpper()
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold">@comment.User.Login</div>
+                                        <small class="text-muted">@comment.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mb-0" style="white-space: pre-line;">@comment.Content</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted text-center mb-0 py-3">
+                        <i class="bi bi-chat fs-4 d-block mb-2"></i>
+                        Brak komentarzy
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Info -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="card-title mb-3">
+                    <i class="bi bi-info-circle me-2"></i>Informacje
+                </h6>
+
+                <div class="mb-3">
+                    <small class="text-muted d-block mb-1">Projekt</small>
+                    <div class="fw-semibold">@task.Project.Name</div>
+                </div>
+
+                <div class="mb-3">
+                    <small class="text-muted d-block mb-1">Przypisane do</small>
+                    @if (task.AssignedToUser != null)
+                    {
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.875rem;">
+                                @task.AssignedToUser.Login.Substring(0, 1).ToUpper()
+                            </div>
+                            <div>
+                                <div class="fw-semibold">@task.AssignedToUser.Login</div>
+                                <small class="text-muted">@task.AssignedToUser.Role</small>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted fst-italic">Nie przypisane</span>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <small class="text-muted d-block mb-1">Utworzone przez</small>
+                    <div class="fw-semibold">@task.CreatedByUser.Login</div>
+                    <small class="text-muted">@task.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                </div>
+
+                @if (task.DueDate.HasValue)
+                {
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">Termin</small>
+                        @{
+                            var daysLeft = (task.DueDate.Value - DateTime.Now).Days;
+                            var dueClass = daysLeft < 0 ? "text-danger" : daysLeft <= 3 ? "text-warning" : "text-success";
+                        }
+                        <div class="fw-semibold @dueClass">
+                            <i class="bi bi-calendar-event me-1"></i>
+                            @task.DueDate.Value.ToString("dd MMMM yyyy")
+                        </div>
+                        <small class="@dueClass">
+                            @if (daysLeft < 0)
+                            {
+                                <text>Przeterminowane o @Math.Abs(daysLeft) dni</text>
+                            }
+                            else if (daysLeft == 0)
+                            {
+                                <text>Termin dzisiaj!</text>
+                            }
+                            else if (daysLeft == 1)
+                            {
+                                <text>Zostało 1 dzień</text>
+                            }
+                            else
+                            {
+                                <text>Zostało @daysLeft dni</text>
+                            }
+                        </small>
+                    </div>
+                }
+
+                @if (task.EstimatedHours > 0 || task.ActualHours > 0)
+                {
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">Czas pracy</small>
+                        @if (task.EstimatedHours > 0)
+                        {
+                            <div><small>Szacowany: <strong>@task.EstimatedHours h</strong></small></div>
+                        }
+                        @if (task.ActualHours > 0)
+                        {
+                            <div><small>Faktyczny: <strong>@task.ActualHours h</strong></small></div>
+                        }
+                    </div>
+                }
+
+                @if (task.StartedAt.HasValue)
+                {
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">Rozpoczęte</small>
+                        <small>@task.StartedAt.Value.ToString("dd.MM.yyyy HH:mm")</small>
+                    </div>
+                }
+
+                @if (task.CompletedAt.HasValue)
+                {
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">Ukończone</small>
+                        <small>@task.CompletedAt.Value.ToString("dd.MM.yyyy HH:mm")</small>
+                    </div>
+                }
+
+                <div>
+                    <small class="text-muted d-block mb-1">Ostatnia aktualizacja</small>
+                    <small>@task.UpdatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Szybkie akcje -->
+        @if (Model.CanEdit)
+        {
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="card-title mb-3">
+                        <i class="bi bi-lightning me-2"></i>Szybkie akcje
+                    </h6>
+                    <div class="d-grid gap-2">
+                        @if (task.Status != "InProgress")
+                        {
+                            <form asp-action="QuickUpdateStatus" asp-route-id="@task.Id" asp-route-status="InProgress" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-play-circle me-1"></i>Rozpocznij pracę
+                                </button>
+                            </form>
+                        }
+                        @if (task.Status == "InProgress")
+                        {
+                            <form asp-action="QuickUpdateStatus" asp-route-id="@task.Id" asp-route-status="InReview" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-info w-100">
+                                    <i class="bi bi-eye me-1"></i>Do sprawdzenia
+                                </button>
+                            </form>
+                        }
+                        @if (task.Status != "Done" && task.Status != "Blocked")
+                        {
+                            <form asp-action="QuickUpdateStatus" asp-route-id="@task.Id" asp-route-status="Done" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-success w-100">
+                                    <i class="bi bi-check-circle me-1"></i>Oznacz jako ukończone
+                                </button>
+                            </form>
+                        }
+                        @if (task.Status != "Blocked")
+                        {
+                            <form asp-action="QuickUpdateStatus" asp-route-id="@task.Id" asp-route-status="Blocked" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-danger w-100">
+                                    <i class="bi bi-exclamation-octagon me-1"></i>Zablokowane
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        <!-- Historia -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title mb-3">
+                    <i class="bi bi-clock-history me-2"></i>Historia zmian
+                </h6>
+                @if (Model.History.Any())
+                {
+                    <div>
+                        @foreach (var historyItem in Model.History.Take(10))
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-icon @(historyItem.Action == "Created" ? "bg-success" : historyItem.Action == "StatusChanged" ? "bg-primary" : historyItem.Action == "AssignedTo" ? "bg-info" : "bg-secondary")">
+                                    @{
+                                        var historyIcon = historyItem.Action switch
+                                        {
+                                            "Created" => "bi-plus",
+                                            "Updated" => "bi-pencil",
+                                            "StatusChanged" => "bi-arrow-repeat",
+                                            "AssignedTo" => "bi-person",
+                                            "CommentAdded" => "bi-chat",
+                                            "AttachmentAdded" => "bi-paperclip",
+                                            "AttachmentDeleted" => "bi-trash",
+                                            _ => "bi-circle"
+                                        };
+                                    }
+                                    <i class="bi @historyIcon text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold small">@historyItem.User.Login</div>
+                                    <div class="text-muted small">@historyItem.Details</div>
+                                    @if (!string.IsNullOrEmpty(historyItem.OldValue) && !string.IsNullOrEmpty(historyItem.NewValue))
+                                    {
+                                        <div class="text-muted small">
+                                            <span class="badge bg-light text-dark">@historyItem.OldValue</span>
+                                            <i class="bi bi-arrow-right mx-1"></i>
+                                            <span class="badge bg-light text-dark">@historyItem.NewValue</span>
+                                        </div>
+                                    }
+                                    <small class="text-muted">@historyItem.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center mb-0 small">Brak historii</p>
+                }
+            </div>
+        </div>    <!-- Usuń zadanie -->
+        @if (Model.CanDelete)
+        {
+            <div class="card border-danger shadow-sm mt-4">
+                <div class="card-body">
+                    <h6 class="card-title text-danger mb-3">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Strefa niebezpieczna
+                    </h6>
+                    <p class="small text-muted mb-3">Po usunięciu zadania nie będzie można go przywrócić.</p>
+                    <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="bi bi-trash me-1"></i>Usuń zadanie
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div><!-- Modal dodawania załącznika -->
+<div class="modal fade" id="uploadModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="UploadAttachment" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="taskId" value="@task.Id" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Dodaj załącznik</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Wybierz plik</label>
+                        <input type="file" name="file" class="form-control" required />
+                        <div class="form-text">Maksymalny rozmiar: 10 MB</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload me-1"></i>Dodaj
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- Modal usuwania zadania -->
+@if (Model.CanDelete)
+{
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-danger">
+                    <h5 class="modal-title text-danger">Potwierdź usunięcie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Czy na pewno chcesz usunąć zadanie <strong>@task.Title</strong>?</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Wszystkie komentarze, załączniki i historia zostaną trwale usunięte.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <form asp-action="Delete" asp-route-id="@task.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-1"></i>Usuń zadanie
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            // Toast container
+            function showToast(message, type = 'success') {
+                // Utwórz container dla toastów jeśli nie istnieje
+                let toastContainer = document.getElementById('toastContainer');
+                if (!toastContainer) {
+                    toastContainer = document.createElement('div');
+                    toastContainer.id = 'toastContainer';
+                    toastContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999;';
+                    document.body.appendChild(toastContainer);
+                }
+
+                // Ikony i kolory dla różnych typów
+                const types = {
+                    success: { icon: 'bi-check-circle-fill', bg: 'bg-success' },
+                    error: { icon: 'bi-x-circle-fill', bg: 'bg-danger' },
+                    info: { icon: 'bi-info-circle-fill', bg: 'bg-info' },
+                    warning: { icon: 'bi-exclamation-triangle-fill', bg: 'bg-warning' }
+                };
+
+                const config = types[type] || types.success;
+
+                // Utwórz toast
+                const toastId = 'toast-' + Date.now();
+                const toastHTML = `
+                    <div id="${toastId}" class="toast align-items-center text-white ${config.bg} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bi ${config.icon} me-2"></i>${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                `;
+
+                toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+                // Pokaż toast
+                const toastElement = document.getElementById(toastId);
+                const toast = new bootstrap.Toast(toastElement, {
+                    autohide: true,
+                    delay: 3000
+                });
+                toast.show();
+
+                // Usuń element po ukryciu
+                toastElement.addEventListener('hidden.bs.toast', function () {
+                    toastElement.remove();
+                });
+            }
+
+            // Funkcja do szybkiej aktualizacji statusu
+            async function quickUpdateStatus(taskId, newStatus, successMessage) {
+                const button = event.target.closest('button');
+                const originalContent = button.innerHTML;
+
+                // Pokaż spinner
+                button.disabled = true;
+                button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Aktualizowanie...';
+
+                try {
+                    const response = await fetch(`/Tasks/QuickUpdateStatus?id=${taskId}&status=${newStatus}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showToast(successMessage, 'success');
+
+                        // Odśwież stronę po krótkiej chwili
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showToast(data.message || 'Wystąpił błąd', 'error');
+                        button.disabled = false;
+                        button.innerHTML = originalContent;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Wystąpił błąd podczas aktualizacji statusu', 'error');
+                    button.disabled = false;
+                    button.innerHTML = originalContent;
+                }
+            }
+        </script>
+    }
+}

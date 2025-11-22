@@ -1,0 +1,154 @@
+﻿@model MyMvcPostgresApp.ViewModels.CreateTaskViewModel
+
+@{
+    ViewData["Title"] = "Nowe zadanie";
+    var teamMembers = ViewBag.TeamMembers as List<MyMvcPostgresApp.Models.User>;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-controller="Tasks" asp-action="Board" asp-route-id="@Model.ProjectId" class="btn btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h2 class="mb-0"><i class="bi bi-plus-circle-fill me-2"></i>Nowe zadanie</h2>
+                <p class="text-muted mb-0">@ViewBag.ProjectName</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="ProjectId" />
+
+                    <div class="mb-4">
+                        <label asp-for="Title" class="form-label fw-semibold">
+                            <i class="bi bi-card-text me-1"></i>Tytuł zadania <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Title" class="form-control form-control-lg" placeholder="np. Implementacja API użytkowników" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label fw-semibold">
+                            <i class="bi bi-file-text me-1"></i>Opis
+                        </label>
+                        <textarea asp-for="Description" class="form-control" rows="5" placeholder="Szczegółowy opis zadania, wymagania, kroki do wykonania..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                        <div class="form-text">Możesz użyć formatu Markdown</div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="AssignedToUserId" class="form-label fw-semibold">
+                                <i class="bi bi-person-fill me-1"></i>Przypisz do
+                            </label>
+                            <select asp-for="AssignedToUserId" class="form-select">
+                                <option value="">Nie przypisane</option>
+                                @if (teamMembers != null)
+                                {
+                                    @foreach (var member in teamMembers)
+                                    {
+                                        <option value="@member.Id">@member.Login (@member.Role)</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="AssignedToUserId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DueDate" class="form-label fw-semibold">
+                                <i class="bi bi-calendar-event me-1"></i>Termin
+                            </label>
+                            <input asp-for="DueDate" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="DueDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-flag-fill me-1"></i>Priorytet <span class="text-danger">*</span>
+                        </label>
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                <div class="form-check p-3 border rounded h-100">
+                                    <input class="form-check-input" type="radio" asp-for="Priority" value="Low" id="priorityLow" />
+                                    <label class="form-check-label w-100 ms-2" for="priorityLow">
+                                        <div class="fw-semibold text-secondary">Niski</div>
+                                        <small class="text-muted">Można później</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check p-3 border rounded h-100">
+                                    <input class="form-check-input" type="radio" asp-for="Priority" value="Medium" id="priorityMedium" checked />
+                                    <label class="form-check-label w-100 ms-2" for="priorityMedium">
+                                        <div class="fw-semibold text-primary">Średni</div>
+                                        <small class="text-muted">Normalny</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check p-3 border rounded h-100">
+                                    <input class="form-check-input" type="radio" asp-for="Priority" value="High" id="priorityHigh" />
+                                    <label class="form-check-label w-100 ms-2" for="priorityHigh">
+                                        <div class="fw-semibold text-warning">Wysoki</div>
+                                        <small class="text-muted">Ważne</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check p-3 border border-danger rounded h-100">
+                                    <input class="form-check-input" type="radio" asp-for="Priority" value="Critical" id="priorityCritical" />
+                                    <label class="form-check-label w-100 ms-2" for="priorityCritical">
+                                        <div class="fw-semibold text-danger">Krytyczny</div>
+                                        <small class="text-muted">Natychmiast!</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Priority" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="EstimatedHours" class="form-label fw-semibold">
+                                <i class="bi bi-clock-history me-1"></i>Szacowany czas (godz.)
+                            </label>
+                            <input asp-for="EstimatedHours" type="number" class="form-control" min="0" max="1000" />
+                            <span asp-validation-for="EstimatedHours" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Tags" class="form-label fw-semibold">
+                                <i class="bi bi-tags me-1"></i>Tagi
+                            </label>
+                            <input asp-for="Tags" class="form-control" placeholder="backend, api, urgent" />
+                            <span asp-validation-for="Tags" class="text-danger small"></span>
+                            <div class="form-text">Oddziel przecinkami</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                            <i class="bi bi-check-lg me-2"></i>Utwórz zadanie
+                        </button>
+                        <a asp-action="Board" asp-route-id="@Model.ProjectId" class="btn btn-outline-secondary btn-lg">
+                            Anuluj
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+```
+

@@ -1,0 +1,175 @@
+﻿@model IEnumerable<MyMvcPostgresApp.Models.ProjectTask>
+
+@{
+    ViewData["Title"] = "Moje zadania";
+    var groupedTasks = Model.GroupBy(t => t.Status).ToDictionary(g => g.Key, g => g.ToList());
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0"><i class="bi bi-person-check-fill me-2"></i>Moje zadania</h2>
+        <p class="text-muted mb-0">Wszystkie zadania przypisane do Ciebie</p>
+    </div>
+    <a asp-controller="MyProjects" asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Moje projekty
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-6 fw-bold text-primary">@Model.Count()</div>
+                <div class="text-muted small">Wszystkich</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-6 fw-bold text-warning">@Model.Count(t => t.Status == "InProgress")</div>
+                <div class="text-muted small">W trakcie</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-6 fw-bold text-success">@Model.Count(t => t.Status == "Done")</div>
+                <div class="text-muted small">Ukończonych</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-6 fw-bold text-danger">@Model.Count(t => t.DueDate.HasValue && t.DueDate.Value < DateTime.Now && t.Status != "Done")</div>
+                <div class="text-muted small">Przeterminowanych</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Any())
+{
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Zadanie</th>
+                            <th>Projekt</th>
+                            <th>Status</th>
+                            <th>Priorytet</th>
+                            <th>Termin</th>
+                            <th>Postęp</th>
+                            <th class="text-end pe-4">Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var task in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-semibold">@task.Title</div>
+                                    @if (!string.IsNullOrEmpty(task.Description))
+                                    {
+                                        <small class="text-muted">@(task.Description.Length > 60 ? task.Description.Substring(0, 60) + "..." : task.Description)</small>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark">@task.Project.Name</span>
+                                </td>
+                                <td>
+                                    @{
+                                        var statusBadgeClass = task.Status switch
+                                        {
+                                            "ToDo" => "bg-secondary",
+                                            "InProgress" => "bg-primary",
+                                            "InReview" => "bg-info",
+                                            "Done" => "bg-success",
+                                            "Blocked" => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @statusBadgeClass">@task.Status</span>
+                                </td>
+                                <td>
+                                    @{
+                                        var priorityBadgeClass = task.Priority switch
+                                        {
+                                            "Low" => "bg-secondary",
+                                            "Medium" => "bg-primary",
+                                            "High" => "bg-warning text-dark",
+                                            "Critical" => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @priorityBadgeClass">@task.Priority</span>
+                                </td>
+                                <td>
+                                    @if (task.DueDate.HasValue)
+                                    {
+                                        var daysLeft = (task.DueDate.Value - DateTime.Now).Days;
+                                        var dueClass = daysLeft < 0 ? "text-danger" : daysLeft <= 3 ? "text-warning" : "";
+                                        <div class="@dueClass">
+                                            <small>@task.DueDate.Value.ToString("dd.MM.yyyy")</small>
+                                        </div>
+                                        @if (daysLeft < 0 && task.Status != "Done")
+                                        {
+                                            <small class="text-danger"><i class="bi bi-exclamation-circle"></i> Przeterminowane</small>
+                                        }
+                                        else if (daysLeft == 0)
+                                        {
+                                            <small class="text-warning"><i class="bi bi-clock"></i> Dzisiaj</small>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (task.Status == "InProgress" || task.Status == "InReview")
+                                    {
+                                        <div class="progress" style="width: 80px; height: 8px;">
+                                            <div class="progress-bar" role="progressbar" style="width: @task.ProgressPercentage%" aria-valuenow="@task.ProgressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <small class="text-muted">@task.ProgressPercentage%</small>
+                                    }
+                                    else if (task.Status == "Done")
+                                    {
+                                        <span class="text-success"><i class="bi bi-check-circle-fill"></i> 100%</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a asp-action="Details" asp-route-id="@task.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@task.Id" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+            <h5 class="text-muted">Brak przypisanych zadań</h5>
+            <p class="text-muted mb-0">Nie masz obecnie żadnych zadań przypisanych do Ciebie</p>
+        </div>
+    </div>
+}

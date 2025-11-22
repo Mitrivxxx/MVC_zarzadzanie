@@ -77,12 +77,33 @@
                                     </div>
                                 </div>
 
-                                <a asp-controller="MyProjects"
-                                   asp-action="Details"
-                                   asp-route-id="@project.Id"
-                                   class="btn btn-primary w-100">
-                                    <i class="bi bi-eye me-1"></i>Zobacz szczegóły
-                                </a>
+                                <!-- DODAJ TEN BLOK Z PRZYCISKAMI -->
+                                <div class="d-flex flex-column gap-2">
+                                    <a asp-controller="Tasks"
+                                       asp-action="Board"
+                                       asp-route-id="@project.Id"
+                                       class="btn btn-primary btn-sm w-100">
+                                        <i class="bi bi-kanban me-1"></i>Tablica zadań
+                                    </a>
+
+                                    @if (member.Role == "Lead")
+                                    {
+                                        <a asp-controller="Tasks"
+                                           asp-action="Create"
+                                           asp-route-id="@project.Id"
+                                           class="btn btn-success btn-sm w-100">
+                                            <i class="bi bi-plus-circle me-1"></i>Nowe zadanie
+                                        </a>
+                                    }
+
+                                    <a asp-controller="MyProjects"
+                                       asp-action="Details"
+                                       asp-route-id="@project.Id"
+                                       class="btn btn-outline-secondary btn-sm w-100">
+                                        <i class="bi bi-eye me-1"></i>Zobacz szczegóły
+                                    </a>
+                                </div>
+                                <!-- KONIEC NOWEGO BLOKU -->
                             </div>
                             <div class="card-footer bg-light text-muted small">
                                 <i class="bi bi-clock-history me-1"></i>Przypisano: @member.AssignedAt.ToString("dd.MM.yyyy")

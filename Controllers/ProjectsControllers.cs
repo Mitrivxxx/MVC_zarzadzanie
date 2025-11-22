@@ -93,8 +93,13 @@ namespace MyMvcPostgresApp.Controllers
             {
                 Name = model.Name,
                 Description = model.Description,
-                StartDate = model.StartDate,
-                EndDate = model.EndDate,
+                // Konwersja dat do UTC jeśli istnieją
+                StartDate = model.StartDate.HasValue
+                    ? DateTime.SpecifyKind(model.StartDate.Value, DateTimeKind.Utc)
+                    : null,
+                EndDate = model.EndDate.HasValue
+                    ? DateTime.SpecifyKind(model.EndDate.Value, DateTimeKind.Utc)
+                    : null,
                 Status = model.Status,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
@@ -157,8 +162,13 @@ namespace MyMvcPostgresApp.Controllers
 
             project.Name = model.Name;
             project.Description = model.Description;
-            project.StartDate = model.StartDate;
-            project.EndDate = model.EndDate;
+            // Konwersja dat do UTC jeśli istnieją
+            project.StartDate = model.StartDate.HasValue
+                ? DateTime.SpecifyKind(model.StartDate.Value, DateTimeKind.Utc)
+                : null;
+            project.EndDate = model.EndDate.HasValue
+                ? DateTime.SpecifyKind(model.EndDate.Value, DateTimeKind.Utc)
+                : null;
             project.Status = model.Status;
             project.UpdatedAt = DateTime.UtcNow;
 
