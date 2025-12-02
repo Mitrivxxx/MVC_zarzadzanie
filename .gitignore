@@ -112,8 +112,8 @@ buildlog.txtbuildlog.txt
 
 
 #upload file
-*.pdf
+/uploads/tasks/**
 *jpg
 *.jpeg
 *.png
-                                            
+                              s              
