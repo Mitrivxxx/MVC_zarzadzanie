@@ -4,37 +4,94 @@
     ViewData["Title"] = "Rejestracja";
 }
 
-<h2>Rejestracja</h2>
+<div class="row justify-content-center mt-4">
+    <div class="col-md-7 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <div class="text-center mb-3">
+                    <i class="bi bi-person-plus fs-1 text-success"></i>
+                    <h3 class="mt-2 mb-0">Rejestracja</h3>
+                    <small class="text-muted">Utwórz nowe konto</small>
+                </div>
 
-<form asp-controller="Account" asp-action="Register" method="post">
-    @Html.AntiForgeryToken()
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
 
-    <div class="form-group">
-        <label asp-for="Login"></label>
-        <input asp-for="Login" class="form-control" />
-        <span asp-validation-for="Login" class="text-danger"></span>
+                <form asp-controller="Account" asp-action="Register" method="post" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Login" class="form-label fw-semibold">Login</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input asp-for="Login" class="form-control" autocomplete="username" />
+                        </div>
+                        <span asp-validation-for="Login" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label fw-semibold">Hasło</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input asp-for="Password" type="password" class="form-control" autocomplete="new-password" />
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword(this, '#Password')">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span class="form-text">Min. 8 znaków. Użyj liter i cyfr.</span>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ConfirmPassword" class="form-label fw-semibold">Potwierdź hasło</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" autocomplete="new-password" />
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword(this, '#ConfirmPassword')">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-person-check me-1"></i>Zarejestruj
+                        </button>
+                        <a asp-action="Login" class="btn btn-outline-secondary">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Masz konto? Zaloguj się
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ConfirmPassword"></label>
-        <input asp-for="ConfirmPassword" type="password" class="form-control" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-2">Zarejestruj</button>
-</form>
-
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success mt-3">@TempData["Success"]</div>
-}
+</div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function togglePassword(btn, selector) {
+            const input = document.querySelector(selector);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+    </script>
 }

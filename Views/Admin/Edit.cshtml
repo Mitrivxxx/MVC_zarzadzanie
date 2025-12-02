@@ -1,37 +1,100 @@
 ﻿@model MyMvcPostgresApp.ViewModels.EditUserViewModel
 
-<h2>Edytuj użytkownika</h2>
-
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
+@{
+    ViewData["Title"] = "Edytuj użytkownika";
+    var roles = ViewBag.Roles as IEnumerable<string> ?? Enumerable.Empty<string>();
 }
 
-<form asp-action="Edit" asp-controller="Admin" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="Id" />
-
-    <div class="form-group mb-3">
-        <label asp-for="Login"></label>
-        <input asp-for="Login" class="form-control" />
-        <span asp-validation-for="Login" class="text-danger"></span>
-    </div>
-
-    <div class="form-group mb-3">
-        <label asp-for="Role">Rola</label><br />
-        <div>
-            <label><input type="radio" asp-for="Role" value="Pracownik" /> Pracownik</label><br />
-            <label><input type="radio" asp-for="Role" value="Kierownik" /> Kierownik</label><br />
-            <label><input type="radio" asp-for="Role" value="HR" /> HR</label><br />
-            <label><input type="radio" asp-for="Role" value="Stażysta" /> Stażysta</label><br />
-            <label><input type="radio" asp-for="Role" value="Admin" /> Admin</label>
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="d-flex align-items-center mb-3">
+            <a asp-action="Users" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h3 class="mb-0">
+                <i class="bi bi-person-gear text-primary me-2"></i>Edytuj użytkownika
+            </h3>
         </div>
-        <span asp-validation-for="Role" class="text-danger"></span>
-    </div>
 
-    <button type="submit" class="btn btn-success">Zapisz</button>
-    <a asp-action="Users" asp-controller="Admin" class="btn btn-secondary">Anuluj</a>
-</form>
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post" novalidate>
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Login" class="form-label fw-semibold">
+                            <i class="bi bi-person me-1"></i>Login
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person-circle"></i></span>
+                            <input asp-for="Login" class="form-control" autocomplete="off" />
+                        </div>
+                        <span asp-validation-for="Login" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Role" class="form-label fw-semibold">
+                            <i class="bi bi-award me-1"></i>Rola
+                        </label>
+                        <select asp-for="Role" class="form-select">
+                            @foreach (var r in roles)
+                            {
+                                <option value="@r">@r</option>
+                            }
+                            @* Fallback common roles if none present *@
+                            @if (!roles.Any())
+                            {
+                                <option value="Admin">Admin</option>
+                                <option value="Kierownik">Kierownik</option>
+                                <option value="HR">HR</option>
+                                <option value="Pracownik">Pracownik</option>
+                                <option value="Stażysta">Stażysta</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger small"></span>
+                        <small class="text-muted d-block mt-1">
+                            Wybierz rolę definiującą poziom uprawnień użytkownika.
+                        </small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">
+                            <i class="bi bi-save me-1"></i>Zapisz zmiany
+                        </button>
+                        <a asp-action="Users" class="btn btn-outline-secondary">
+                            Anuluj
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-3">
+            <div class="card-body small text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Zmiana loginu natychmiast wpływa na możliwość logowania. Upewnij się, że użytkownik został poinformowany.
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @{

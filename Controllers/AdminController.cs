@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using MyMvcPostgresApp.Data;
 using MyMvcPostgresApp.Models;
 using MyMvcPostgresApp.ViewModels;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace MyMvcPostgresApp.Controllers
@@ -24,35 +23,29 @@ namespace MyMvcPostgresApp.Controllers
         {
             const int pageSize = 10;
 
-            // Pobierz wszystkich użytkowników
             var usersQuery = _context.Users.AsQueryable();
 
-            // Filtrowanie po loginie
             if (!string.IsNullOrWhiteSpace(login))
             {
                 usersQuery = usersQuery.Where(u => u.Login.Contains(login));
                 ViewData["LoginFilter"] = login;
             }
 
-            // Filtrowanie po roli
             if (!string.IsNullOrWhiteSpace(role))
             {
                 usersQuery = usersQuery.Where(u => u.Role == role);
                 ViewData["RoleFilter"] = role;
             }
 
-            // Oblicz całkowitą liczbę użytkowników
             var totalUsers = await usersQuery.CountAsync();
             var totalPages = (int)Math.Ceiling(totalUsers / (double)pageSize);
 
-            // Pobierz użytkowników dla aktualnej strony
             var users = await usersQuery
                 .OrderByDescending(u => u.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Pobierz wszystkie dostępne role
             var roles = await _context.Users
                 .Select(u => u.Role)
                 .Distinct()
@@ -85,7 +78,6 @@ namespace MyMvcPostgresApp.Controllers
                 return View("CreateUser", model);
             }
 
-            // Sprawdź czy użytkownik już istnieje
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Login == model.Login);
             if (existingUser != null)
             {
@@ -93,7 +85,6 @@ namespace MyMvcPostgresApp.Controllers
                 return View("CreateUser", model);
             }
 
-            // Utwórz nowego użytkownika
             var user = new User
             {
                 Login = model.Login,
@@ -120,6 +111,13 @@ namespace MyMvcPostgresApp.Controllers
                 return RedirectToAction(nameof(Users));
             }
 
+            var roles = await _context.Users
+                .Select(u => u.Role)
+                .Distinct()
+                .OrderBy(r => r)
+                .ToListAsync();
+            ViewBag.Roles = roles;
+
             var model = new EditUserViewModel
             {
                 Id = user.Id,
@@ -137,6 +135,11 @@ namespace MyMvcPostgresApp.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.Roles = await _context.Users
+                    .Select(u => u.Role)
+                    .Distinct()
+                    .OrderBy(r => r)
+                    .ToListAsync();
                 return View(model);
             }
 
@@ -147,13 +150,17 @@ namespace MyMvcPostgresApp.Controllers
                 return RedirectToAction(nameof(Users));
             }
 
-            // Sprawdź czy nowy login nie jest już zajęty przez innego użytkownika
             var existingUser = await _context.Users
                 .FirstOrDefaultAsync(u => u.Login == model.Login && u.Id != model.Id);
 
             if (existingUser != null)
             {
                 ModelState.AddModelError("Login", "Użytkownik o takim loginie już istnieje");
+                ViewBag.Roles = await _context.Users
+                    .Select(u => u.Role)
+                    .Distinct()
+                    .OrderBy(r => r)
+                    .ToListAsync();
                 return View(model);
             }
 
@@ -178,7 +185,6 @@ namespace MyMvcPostgresApp.Controllers
                 return RedirectToAction(nameof(Users));
             }
 
-            // Nie pozwól usunąć samego siebie
             var currentUserLogin = User.Identity?.Name;
             if (user.Login == currentUserLogin)
             {
@@ -193,15 +199,12 @@ namespace MyMvcPostgresApp.Controllers
             return RedirectToAction(nameof(Users));
         }
 
-        // Metoda hashowania hasła - taka sama jak w AccountController
         private string HashPassword(string password)
         {
-            using (var sha256 = SHA256.Create())
-            {
-                var bytes = Encoding.UTF8.GetBytes(password);
-                var hash = sha256.ComputeHash(bytes);
-                return Convert.ToBase64String(hash);
-            }
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
         }
     }
 }

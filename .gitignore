@@ -109,3 +109,11 @@ docker-compose.*.yml
 
 #jakies dodatkowe
 buildlog.txtbuildlog.txt
+
+
+#upload file
+*.pdf
+*jpg
+*.jpeg
+*.png
+                                            
