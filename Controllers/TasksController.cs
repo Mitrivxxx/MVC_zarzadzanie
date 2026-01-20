@@ -705,13 +705,14 @@ namespace MyMvcPostgresApp.Controllers
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!int.TryParse(userIdString, out int userId))
             {
-                return Json(new { success = false, message = "Nieautoryzowany dostęp" });
+                return RedirectToAction("Login", "Account");
             }
 
             var task = await _context.ProjectTasks.FindAsync(id);
             if (task == null)
             {
-                return Json(new { success = false, message = "Nie znaleziono zadania" });
+                TempData["Error"] = "Nie znaleziono zadania";
+                return RedirectToAction("Index", "MyProjects");
             }
 
             // Sprawdź dostęp
@@ -720,14 +721,16 @@ namespace MyMvcPostgresApp.Controllers
 
             if (member == null)
             {
-                return Json(new { success = false, message = "Brak dostępu do tego zadania" });
+                TempData["Error"] = "Brak dostępu do tego zadania";
+                return RedirectToAction("Index", "MyProjects");
             }
 
             // Sprawdź czy użytkownik może edytować
             bool canEdit = member.Role == "Lead" || task.AssignedToUserId == userId || task.CreatedByUserId == userId;
             if (!canEdit)
             {
-                return Json(new { success = false, message = "Nie masz uprawnień do zmiany statusu tego zadania" });
+                TempData["Error"] = "Nie masz uprawnień do zmiany statusu tego zadania";
+                return RedirectToAction("Details", new { id = task.Id });
             }
 
             var oldStatus = task.Status;
@@ -768,12 +771,8 @@ namespace MyMvcPostgresApp.Controllers
                 _ => status
             };
 
-            return Json(new
-            {
-                success = true,
-                message = $"Status zmieniony na: {statusName}",
-                newStatus = status
-            });
+            TempData["Success"] = $"Status zmieniony na: {statusName}";
+            return RedirectToAction("Board", new { id = task.ProjectId });
         }
         public async Task<IActionResult> MyTasks()
         {

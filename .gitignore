@@ -116,4 +116,6 @@ buildlog.txtbuildlog.txt
 *jpg
 *.jpeg
 *.png
-                              s              
+
+
+*.env       

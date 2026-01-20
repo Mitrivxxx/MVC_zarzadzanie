@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MyMvcPostgresApp.Data;
+using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,11 +21,35 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
-// ensure database/migrations
+// ensure database/migrations with retries
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    var db = services.GetRequiredService<AppDbContext>();
+
+    int maxAttempts = 10;
+    int delayMs = 2000;
+
+    for (int attempt = 1; attempt <= maxAttempts; attempt++)
+    {
+        try
+        {
+            db.Database.Migrate();
+            logger.LogInformation("Database migrated successfully.");
+            break;
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Migration attempt {Attempt} failed.", attempt);
+            if (attempt == maxAttempts)
+            {
+                logger.LogError(ex, "Max migration attempts reached. Exiting.");
+                throw;
+            }
+            Thread.Sleep(delayMs);
+        }
+    }
 }
 
 if (!app.Environment.IsDevelopment())
