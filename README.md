@@ -3,33 +3,58 @@
 
 ````````
 
-# PM Suite - uruchomienie w Docker (instrukcja)
+# PM Suite — uruchomienie w Docker (instrukcja dla recenzenta)
+
+Zawarto?? paczki:
+- Kod ?ród?owy aplikacji (Razor Pages / MVC)
+- Dockerfile
+- docker-compose.yml
+- .env.example (przyk?adowe zmienne ?rodowiskowe)
+- db/init/full.sql  (opcjonalnie: zrzut bazy SQL)  LUB folder Migrations/
+- README.md (ten plik)
 
 Wymagania:
-- Docker Desktop (Docker Compose obs?ugiwany)
-- (opcjonalnie) .env z ustawieniami DB
+- Docker Desktop (wersja obs?uguj?ca Docker Compose)
+- (opcjonalnie) narz?dzia do rozpakowania ZIP
 
-Krok 1 — przygotowanie .env
-1. Skopiuj plik .env.example do .env:
+Szybkie uruchomienie:
+1. Skopiuj plik .env.example do .env i uzupe?nij warto?ci:
+   - POSTGRES_USER
+   - POSTGRES_PASSWORD
+   - POSTGRES_DB
+
+   Przyk?ad (PowerShell / Bash):
    cp .env.example .env
-2. Zmie? has?o w .env (nie wrzucaj .env do repo).
 
-Krok 2 — (opcjonalne) Dodaj dump bazy
-- Je?li masz zrzut bazy (full.sql), umie?? go w ./db/init/full.sql — zostanie wykonany przy pierwszym starcie Postgresa.
-
-Krok 3 — (opcjonalne) W??cz automatyczne migracje
-- W Program.cs w projekcie dodaj fragment, który wykona db.Database.Migrate() przy starcie (zamie? YourDbContext na swoj? klas? DbContext).
-- Je?eli nie chcesz modyfikowa? kodu — mo?esz uruchomi? migracje r?cznie lokalnie przy pomocy dotnet ef przed uruchomieniem kontenerów.
-
-Krok 4 — uruchomienie
-1. Zbuduj i uruchom:
+2. Uruchom kontenery:
    docker compose up --build
-2. Aplikacja dost?pna na: http://localhost:5000
 
-Krok 5 — zatrzymanie i usuwanie
-- Zatrzymanie: docker compose down
-- Usuni?cie wolumenu danych (usuwa DB): docker compose down -v
+3. Aplikacja dost?pna pod:
+   http://localhost:5000
 
-Uwagi:
-- Je?li Twoja aplikacja u?ywa innej nazwy projektu / DLL ni? MyMvcPostgresApp.dll, zaktualizuj Dockerfile i ewentualnie nazw? csproj.
-- Nie wysy?aj plików zawieraj?cych has?a (np. .env). Do??cz .env.example z warto?ciami placeholder
+Obs?uga bazy danych:
+- Je?li w paczce jest db/init/full.sql: Postgres wykona skrypt przy pierwszym starcie serwisu DB (tworzenie wolumenu).
+- Je?li zamiast dumpa dostarczono folder Migrations: aplikacja ma w Program.cs automatyczne db.Database.Migrate() i migracje zostan? zastosowane przy starcie.
+
+Jak wygenerowa? dump (je?li potrzebujesz zrobi? zrzut lokalnej bazy):
+- Je?eli baza uruchomiona w kontenerze:
+  docker compose exec db pg_dump -U ${POSTGRES_USER} -F p -f /tmp/full.sql ${POSTGRES_DB}
+  docker cp $(docker compose ps -q db):/tmp/full.sql ./db/init/full.sql
+
+Bezpiecze?stwo i uwagi:
+- Nie do??czaj .env ani plików z has?ami do repo.
+- Je?li .env zosta? ju? skomitowany: git rm --cached .env && git commit -m "Remove .env"
+- W .env.example u?yj bezpiecznych placeholderów.
+
+Jak przygotowa? ZIP do wys?ania:
+- Upewnij si?, ?e .env nie jest w repo i ?e db/init/full.sql lub Migrations s? do??czone.
+- U?yj:
+  git archive --format zip -o ../MyMvcPostgresApp_source.zip HEAD
+  zip -g ../MyMvcPostgresApp_source.zip db/init/full.sql README.md .env.example
+
+Kontakt:
+- Je?li co? nie dzia?a — sprawd? logi:
+  docker compose logs -f web
+  docker compose logs -f db
+
+Powodzenia — w razie potrzeby dopracuj? README pod Twoje ?rodowisko.
